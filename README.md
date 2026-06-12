@@ -11,6 +11,12 @@ YApi Pro 是 YApi 的长期维护分支，我们将长期维护，及时更新�
 可避免因没有及时处理安全漏洞等原因造成自己服务器被入侵勒索等。
 
 ### 最近更新 
+**v1.9.6** (2026-06-12)
+1. 增加 Docker Compose 本地 Demo 部署方案
+2. 优化 Dockerfile 构建缓存，加快 rebuild 速度
+3. 修复 gzip 静态资源 Content-Type 错误导致样式丢失的问题
+4. 补充 extend 生产依赖
+
 **v1.9.3** (2021-07-13)
 1. 修复 mockJs 运行沙盒漏洞 (近期服务因为漏洞被攻击的问题)
 2. 修复 jsf.extend 依赖问题（安装时报错的问题）
@@ -96,7 +102,35 @@ YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大
     yapi ls //查看版本号列表
     yapi update //更新到最新版本
     yapi update -v {Version} //更新到指定版本
-    
+
+### Docker 快速 Demo
+
+本地快速体验 YApi，需要已安装 Docker 和 Docker Compose。
+
+```bash
+# 构建并启动（首次约 4 分钟；仅改业务代码时 rebuild 约数秒）
+docker compose up -d --build
+
+# 访问 http://127.0.0.1:3000
+```
+
+默认管理员账号：
+
+- 邮箱：`admin@admin.com`
+- 密码：`yapi.pro`
+
+常用命令：
+
+```bash
+docker compose logs -f yapi    # 查看日志
+docker compose restart yapi    # 重启服务
+docker compose up -d --build yapi  # 改代码后重新构建并启动
+docker compose down            # 停止并移除容器
+docker compose down -v         # 同时清除 MongoDB 数据
+```
+
+配置文件位于 `docker/config.json`，可按需修改端口、数据库连接等。
+
 ### 教程
 * [使用 YApi 管理 API 文档，测试， mock](https://juejin.im/post/5acc879f6fb9a028c42e8822)
 * [自动更新 Swagger 接口数据到 YApi 平台](https://juejin.im/post/5af500e251882567096140dd)

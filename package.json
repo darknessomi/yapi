@@ -1,6 +1,6 @@
 {
   "name": "yapi-pro",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "YApi Pro",
   "main": "server/app.js",
   "scripts": {
@@ -39,6 +39,7 @@
     "crypto-js": "^4.2.0",
     "deep-extend": "^0.5.1",
     "deref": "^0.7.6",
+    "extend": "^3.0.2",
     "fs-extra": "^11.3.5",
     "generate-schema": "^2.6.0",
     "immer": "^9.0.21",

@@ -1,3 +1,9 @@
+## v1.9.6
+* feat: 增加 Docker Compose 本地 Demo 部署方案
+* build: 优化 Dockerfile 分层缓存，加快 rebuild 速度
+* fix: 修复 gzip 静态资源 Content-Type 错误导致样式丢失
+* fix: 将 extend 加入生产依赖
+
 ## v1.9.2
 * fix: 修复高级 mock 无效的bug
 * opti: 对登录 email 空格的过滤

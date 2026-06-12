@@ -47,6 +47,11 @@ app.use(async (ctx, next) => {
   if (ctx.path.indexOf('/prd') === 0) {
     ctx.set('Cache-Control', 'max-age=8640000000');
     if (yapi.commons.fileExist(yapi.path.join(yapi.WEBROOT, 'static', ctx.path + '.gz'))) {
+      if (ctx.path.endsWith('.css')) {
+        ctx.type = 'text/css';
+      } else if (ctx.path.endsWith('.js')) {
+        ctx.type = 'application/javascript';
+      }
       ctx.set('Content-Encoding', 'gzip');
       ctx.path = ctx.path + '.gz';
     }

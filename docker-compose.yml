@@ -1,0 +1,27 @@
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  yapi:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ./docker/config.json:/yapi/config.json:ro
+    entrypoint: ["/bin/sh", "/yapi/vendors/docker/start.sh"]
+
+volumes:
+  mongo-data:
