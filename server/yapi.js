@@ -1,7 +1,21 @@
 const path = require('path');
 const fs = require('fs-extra');
 const nodemailer = require('nodemailer');
-const config = require('../../config.json');
+
+function loadConfig() {
+  const candidates = [
+    path.join(__dirname, '../../config.json'),
+    path.join(__dirname, '../config.json')
+  ];
+  for (const configPath of candidates) {
+    if (fs.existsSync(configPath)) {
+      return require(configPath);
+    }
+  }
+  throw new Error('config.json not found');
+}
+
+const config = loadConfig();
 
 let insts = new Map();
 let mail;

@@ -11,17 +11,16 @@ import EasyDragSort from '../../../../components/EasyDragSort/EasyDragSort.js';
 import mockEditor from 'client/components/AceEditor/mockEditor';
 import AceEditor from 'client/components/AceEditor/AceEditor';
 import axios from 'axios';
-import { MOCK_SOURCE } from '../../../../constants/variable.js';
 import Editor from 'common/tui-editor/dist/tui-editor-Editor-all.min.js';
-const jSchema = require('json-schema-editor-visual');
-const ResBodySchema = jSchema({ lang: 'zh_CN', mock: MOCK_SOURCE });
-const ReqBodySchema = jSchema({ lang: 'zh_CN', mock: MOCK_SOURCE });
+import jSchema from 'json-schema-editor-visual';
+const ResBodySchema = jSchema({ lang: 'zh_CN', mock: constants.MOCK_SOURCE });
+const ReqBodySchema = jSchema({ lang: 'zh_CN', mock: constants.MOCK_SOURCE });
 const TabPane = Tabs.TabPane;
 
 
-require('common/tui-editor/dist/tui-editor.min.css'); // editor ui
-require('common/tui-editor/dist/tui-editor-contents.min.css'); // editor content
-require('./editor.css');
+import 'common/tui-editor/dist/tui-editor.min.css';
+import 'common/tui-editor/dist/tui-editor-contents.min.css';
+import './editor.css';
 
 
 function checkIsJsonSchema(json) {

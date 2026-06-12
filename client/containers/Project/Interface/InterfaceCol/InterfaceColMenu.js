@@ -4,7 +4,6 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import {
   fetchInterfaceColList,
-  fetchInterfaceCaseList,
   setColData,
   fetchCaseList,
   fetchCaseData
@@ -55,7 +54,6 @@ const ColModalForm = Form.create()(props => {
   },
   {
     fetchInterfaceColList,
-    fetchInterfaceCaseList,
     fetchCaseData,
     // fetchInterfaceListMenu,
     fetchCaseList,
@@ -69,7 +67,6 @@ export default class InterfaceColMenu extends Component {
     match: PropTypes.object,
     interfaceColList: PropTypes.array,
     fetchInterfaceColList: PropTypes.func,
-    fetchInterfaceCaseList: PropTypes.func,
     // fetchInterfaceListMenu: PropTypes.func,
     fetchCaseList: PropTypes.func,
     fetchCaseData: PropTypes.func,

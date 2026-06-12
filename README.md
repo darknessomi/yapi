@@ -180,7 +180,23 @@ node server/app.js
 # 或使用 npm start
 ```
 
-如需修改前端代码，使用 `npm run build-client` 重新构建前端资源（产物在 `static/prd`）。
+前端使用 Vite 构建。开发时双端口运行：Koa 后端 + Vite 前端（`:4000`）。
+
+```bash
+# 终端 1：后端（dev 模式使用 static/dev.html）
+npm run dev-server
+
+# 终端 2：前端 Vite dev server
+npm run dev-client
+
+# 浏览器访问 http://127.0.0.1:3000
+```
+
+生产构建：
+
+```bash
+npm run build-client   # 产物输出到 static/prd
+```
 
 ### 使用 pm2 管理进程
 

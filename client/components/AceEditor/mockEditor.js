@@ -1,13 +1,13 @@
-var ace = require('brace'),
-  Mock = require('mockjs');
-require('brace/mode/javascript');
-require('brace/mode/json');
-require('brace/mode/xml');
-require('brace/mode/html');
-require('brace/theme/xcode');
-require('brace/ext/language_tools.js');
-var json5 = require('json5');
-const MockExtra = require('common/mock-extra.js');
+import ace from 'brace';
+import Mock from 'mockjs';
+import 'brace/mode/javascript';
+import 'brace/mode/json';
+import 'brace/mode/xml';
+import 'brace/mode/html';
+import 'brace/theme/xcode';
+import 'brace/ext/language_tools.js';
+import json5 from 'json5';
+import MockExtra from 'common/mock-extra.js';
 
 var langTools = ace.acequire('ace/ext/language_tools'),
   wordList = [
@@ -194,4 +194,4 @@ function run(options) {
       }
     })
  */
-module.exports = run;
+export default run;

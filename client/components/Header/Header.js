@@ -63,7 +63,7 @@ const MenuUser = props => (
   </Menu>
 );
 
-const tipFollow = (
+const tipFollow = () => (
   <div className="title-container">
     <h3 className="title">
       <Icon type="star" /> 关注
@@ -71,7 +71,7 @@ const tipFollow = (
     <p>这里是你的专属收藏夹，便于你找到自己的项目</p>
   </div>
 );
-const tipAdd = (
+const tipAdd = () => (
   <div className="title-container">
     <h3 className="title">
       <Icon type="plus-circle" /> 新建项目
@@ -79,7 +79,7 @@ const tipAdd = (
     <p>在任何页面都可以快速新建项目</p>
   </div>
 );
-const tipDoc = (
+const tipDoc = () => (
   <div className="title-container">
     <h3 className="title">
       使用文档 <Tag color="orange">推荐!</Tag>
@@ -113,7 +113,7 @@ const ToolUser = props => {
       <Popover
         overlayClassName="popover-index"
         content={<GuideBtns />}
-        title={tipFollow}
+        title={tipFollow()}
         placement="bottomRight"
         arrowPointAtCenter
         visible={props.studyTip === 1 && !props.study}
@@ -129,7 +129,7 @@ const ToolUser = props => {
       <Popover
         overlayClassName="popover-index"
         content={<GuideBtns />}
-        title={tipAdd}
+        title={tipAdd()}
         placement="bottomRight"
         arrowPointAtCenter
         visible={props.studyTip === 2 && !props.study}
@@ -145,7 +145,7 @@ const ToolUser = props => {
       <Popover
         overlayClassName="popover-index"
         content={<GuideBtns isLast={true} />}
-        title={tipDoc}
+        title={tipDoc()}
         placement="bottomRight"
         arrowPointAtCenter
         visible={props.studyTip === 3 && !props.study}

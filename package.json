@@ -7,11 +7,13 @@
     "dev-copy-icon": "cp -r static/iconfont ./",
     "dev-server": " nodemon server/app.js dev -L",
     "install-server": " node server/install.js",
-    "dev-client": "npm run dev-copy-icon && ykit s -p 4000",
+    "generate-plugin-module": "node scripts/generate-plugin-module.js",
+    "dev-client": "npm run dev-copy-icon && npm run generate-plugin-module && vite --port 4000",
     "dev": "npm run dev-server & npm run dev-client",
     "start": " node server/app.js",
     "test": "ava",
-    "build-client": "NODE_ENV=production ykit pack -m",
+    "prebuild-client": "npm run generate-plugin-module",
+    "build-client": "vite build && node scripts/generate-assets.js && node scripts/gzip-prd.js",
     "npm-publish": "node ./npm-publish.js",
     "docs": "ydoc build"
   },
@@ -39,6 +41,7 @@
     "crypto-js": "^4.2.0",
     "deep-extend": "^0.5.1",
     "deref": "^0.7.6",
+    "events": "^3.3.0",
     "extend": "^3.0.2",
     "fs-extra": "^11.3.5",
     "generate-schema": "^2.6.0",
@@ -75,19 +78,18 @@
     "yapi-plugin-qsso": "^1.1.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.25.9",
+    "@babel/plugin-transform-class-properties": "^7.25.9",
+    "@vitejs/plugin-react": "^4.3.4",
     "antd": "^3.26.20",
-    "anujs": "^1.7.5",
-    "assets-webpack-plugin": "^3.9.12",
     "ava": "^2.4.0",
     "babel": "^6.23.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^7.2.3",
-    "babel-loader": "^6.4.1",
     "babel-plugin-import": "^1.13.8",
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-plugin-webpack-alias": "^2.1.2",
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
@@ -96,20 +98,13 @@
     "babel-runtime": "^6.26.0",
     "brace": "^0.10.0",
     "buffer-shims": "^1.0.0",
-    "compression-webpack-plugin": "^1.1.12",
-    "copy-webpack-plugin": "^4.6.0",
     "core-decorators": "^0.17.0",
-    "css-loader": "^0.28.11",
     "eslint": "^3.19.0",
-    "eslint-loader": "^1.9.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
-    "extract-text-webpack-plugin": "^2.1.2",
     "ghooks": "^2.0.4",
-    "happypack": "^4.0.1",
     "json-schema-editor-visual": "^1.1.1",
     "less": "^2.7.3",
-    "less-loader": "^4.1.0",
     "markdown-it-include": "^1.1.1",
     "nodemon": "^3.1.14",
     "prop-types": "^15.8.1",
@@ -132,19 +127,11 @@
     "redux-promise": "^0.5.3",
     "rewire": "^2.5.2",
     "sass": "^1.101.0",
-    "sass-loader": "^7.3.1",
-    "string-replace-webpack-plugin": "^0.1.3",
-    "style-loader": "^0.18.2",
     "table-resolver": "^3.3.0",
-    "url-loader": "^0.6.2",
     "validate-commit-msg": "^2.14.0",
-    "webpack": "^2.7.0",
-    "webpack-dev-middleware": "^1.12.2",
-    "webpack-node-externals": "^1.7.2",
-    "ydoc-plugin-img-view": "^1.0.3",
-    "ykit": "^0.6.2",
-    "ykit-config-antd": "^0.1.3",
-    "ykit-config-es6": "^1.2.0"
+    "vite": "^5.4.11",
+    "vite-plugin-commonjs": "^0.10.3",
+    "ydoc-plugin-img-view": "^1.0.3"
   },
   "config": {
     "ghooks": {
@@ -185,13 +172,7 @@
       "react"
     ],
     "plugins": [
-      "transform-runtime",
-      [
-        "webpack-alias",
-        {
-          "config": "webpack.alias.js"
-        }
-      ]
+      "transform-runtime"
     ]
   },
   "ava": {

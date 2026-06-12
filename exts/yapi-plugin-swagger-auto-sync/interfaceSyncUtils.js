@@ -18,7 +18,9 @@ class syncUtils {
         this.syncModel = yapi.getInst(syncModel);
         this.tokenModel = yapi.getInst(tokenModel)
         this.projectModel = yapi.getInst(projectModel);
-        this.init()
+        this.init().catch(err => {
+            yapi.commons.log('swagger auto sync init failed: ' + err.message);
+        });
     }
 
     //初始化定时任务

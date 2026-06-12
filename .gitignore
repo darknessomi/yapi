@@ -35,6 +35,7 @@ Thumbs.db
 # *.tar.gz
 
 node_modules/
+config.json
 runtime/
 /prd/
 /dev/
@@ -42,5 +43,6 @@ runtime/
 .tags1
 tsconfig.json
 client/plugin-module.js
+static/prd/.vite/
 .vscode
 /iconfont
