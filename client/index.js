@@ -1,6 +1,6 @@
 import './styles/common.scss';
 import './styles/theme.less';
-import { LocaleProvider } from 'antd';
+import LocaleProvider from 'antd/lib/locale-provider';
 import './plugin';
 import React from 'react';
 import ReactDOM from 'react-dom';

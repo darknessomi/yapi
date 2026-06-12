@@ -21,6 +21,10 @@ function arrToObj(arr) {
 
 module.exports = function() {
   yapi.connect.then(function() {
+    if (!mongoose.connection.db) {
+      yapi.commons.log('advanced-mock: mongodb not connected, skip index init');
+      return;
+    }
     let Col = mongoose.connection.db.collection('adv_mock');
     Col.createIndex({
       interface_id: 1
@@ -36,6 +40,8 @@ module.exports = function() {
     caseCol.createIndex({
       project_id: 1
     });
+  }).catch(err => {
+    yapi.commons.log('advanced-mock init failed: ' + err.message);
   });
 
   async function checkCase(ctx, interfaceId) {
