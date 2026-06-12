@@ -18,6 +18,8 @@ jobs:
 
       - run: npm ci
 
+      - run: cp docker/config.json config.json
+
       - run: npm test
         env:
           BABEL_DISABLE_CACHE: 1
