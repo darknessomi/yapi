@@ -1,69 +1,29 @@
-## YApi Pro 说明
+## YApi（社区 fork 维护版）
 
-YApi 是一个非常优秀的项目，只是基本没有维护了。所以我们考虑新开一个分支（YApi Pro）接手维护，希望更多人能参与进来。
-YApi Pro 是 YApi 的长期维护分支，我们将长期维护，及时更新、处理问题，欢迎更多社区的小伙伴一起参与。
+本仓库 fork 自 [YApi](https://github.com/YMFE/yapi) / YApi Pro，原作者已停止维护。
+本 fork 在原有功能基础上做兼容性修复，并提供开箱即用的 Docker Compose 部署方案。
 
-## YApi Pro 在线版本
+> 说明：原 YApi Pro 的在线版（yapi.pro）、官方 Docker 镜像（yapipro/yapi）、
+> `yapi-pro-cli` 命令行升级机制、官方交流群等均由原作者运营，**与本 fork 无关，已不再适用**。
+> 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
 
-我们将长期维护YApi的在线版本，推荐使用：https://yapi.pro
-
-在线版本可以节省大量的安装维护成本，我们有专人维护服务器，解决安全问题等，可以放心使用。
-可避免因没有及时处理安全漏洞等原因造成自己服务器被入侵勒索等。
-
-### 最近更新 
+### 最近更新
 **v1.9.6** (2026-06-12)
-1. 增加 Docker Compose 本地 Demo 部署方案
+1. 增加 Docker Compose 本地部署方案
 2. 优化 Dockerfile 构建缓存，加快 rebuild 速度
 3. 修复 gzip 静态资源 Content-Type 错误导致样式丢失的问题
 4. 补充 extend 生产依赖
+5. 升级运行环境至 Node 18 / MongoDB 6
 
-**v1.9.3** (2021-07-13)
-1. 修复 mockJs 运行沙盒漏洞 (近期服务因为漏洞被攻击的问题)
-2. 修复 jsf.extend 依赖问题（安装时报错的问题）
-3. 修复 yapi-cli 无法更新到最新版的问题（改用：yapi-pro-cli）
-4. 增加 Dockerfile 文件，发布 Dockerfile 镜像
+## YApi 可视化接口管理平台
 
-### 仓库
+YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大</strong>的 api 管理平台，旨在为开发、产品、测试人员提供更优雅的接口管理服务。可以帮助开发者轻松创建、发布、维护 API，YApi 还为用户提供了优秀的交互体验，开发人员只需利用平台提供的接口数据写入工具以及简单的点击操作就可以实现接口的管理。
 
-1. github：https://github.com/yapi-pro
-2. gitee：https://gitee.com/yapi-pro/yapi （国内镜像）
-3. Docker 镜像：https://hub.docker.com/r/yapipro/yapi
-
-YApi Pro 提供 Docker 镜像，可以直接通过 Docker 安装部署，方便快捷
-
-
-### 从 YApi 升级到 YApi Pro
-原来安装了 YApi 的用户，可以无缝升级到最新版的 YApi Pro，运行以下命令即可升级。
-
-    npm install -g yapi-pro-cli --registry https://registry.npm.taobao.org
-    yapi update 
-
-
-
-### 交流群
-使用问题可在群里咨询，我们基本上都能比较及时的回复
-
-![YApi微信群 QQ群](https://user-images.githubusercontent.com/87224061/125883300-bd4389f4-4749-49f1-9509-0d39a8ba6288.png)
-
-## YApi  可视化接口管理平台
-
-体验地址：
-
-[https://yapi.pro](https://yapi.pro)
-
-文档：
+文档（原作者，仅供功能参考）：
 <p><a target="_blank" href="https://hellosean1025.github.io/yapi">hellosean1025.github.io/yapi</a></p>
 
 ### 平台介绍
 ![avatar](yapi-base-flow.jpg)
-
-YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大</strong>的 api 管理平台，旨在为开发、产品、测试人员提供更优雅的接口管理服务。可以帮助开发者轻松创建、发布、维护 API，YApi 还为用户提供了优秀的交互体验，开发人员只需利用平台提供的接口数据写入工具以及简单的点击操作就可以实现接口的管理。
-
-**QQ交流群**:
-
-644642474 **主群可能已满**
-
-941802405 **群2欢迎加入**
 
 ### 特性
 *  基于 Json5 和 Mockjs 定义接口返回数据的结构和文档，效率提升多倍
@@ -74,38 +34,15 @@ YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大
 *  支持 postman, har, swagger 数据导入
 *  免费开源，内网部署，信息再也不怕泄露了
 
-### 内网部署
-#### 环境要求
-* nodejs（7.6+)
-* mongodb（2.6+）
-* git
-#### 安装
-使用我们提供的 yapi-pro-cli 工具，部署 YApi 平台是非常容易的。执行 yapi server 启动可视化部署程序，输入相应的配置和点击开始部署，就能完成整个网站的部署。部署完成之后，可按照提示信息，执行 node/{网站路径/server/app.js} 启动服务器。在浏览器打开指定url, 点击登录输入您刚才设置的管理员邮箱，默认密码为 yapi.pro 登录系统（默认密码可在个人中心修改）。
+## 部署（推荐：Docker Compose）
 
-    npm install -g yapi-pro-cli --registry https://registry.npm.taobao.org
-    yapi server 
-    
-#### 服务管理
-利用pm2方便服务管理维护。
+本仓库已内置预编译前端（`static/prd`），无需单独构建前端即可运行。
 
-    npm install pm2 -g  //安装pm2
-    cd  {项目目录}
-    pm2 start "vendors/server/app.js" --name yapi //pm2管理yapi服务
-    pm2 info yapi //查看服务信息
-    pm2 stop yapi //停止服务
-    pm2 restart yapi //重启服务
+### 环境要求
+* Docker
+* Docker Compose
 
-#### 升级
-升级项目版本是非常容易的，并且不会影响已有的项目数据，只会同步 vendors 目录下的源码文件。
-    
-    cd  {项目目录}
-    yapi ls //查看版本号列表
-    yapi update //更新到最新版本
-    yapi update -v {Version} //更新到指定版本
-
-### Docker 快速 Demo
-
-本地快速体验 YApi，需要已安装 Docker 和 Docker Compose。
+### 安装与启动
 
 ```bash
 # 构建并启动（首次约 4 分钟；仅改业务代码时 rebuild 约数秒）
@@ -114,24 +51,148 @@ docker compose up -d --build
 # 访问 http://127.0.0.1:3000
 ```
 
+首次启动会自动初始化数据库并创建管理员账号（由 `docker/start.sh` 完成，通过 `init.lock` 保证只初始化一次）。
+
 默认管理员账号：
 
 - 邮箱：`admin@admin.com`
-- 密码：`yapi.pro`
+- 密码：`yapi.pro`（登录后可在个人中心修改）
 
-常用命令：
+### 服务管理
 
 ```bash
-docker compose logs -f yapi    # 查看日志
-docker compose restart yapi    # 重启服务
-docker compose up -d --build yapi  # 改代码后重新构建并启动
-docker compose down            # 停止并移除容器
-docker compose down -v         # 同时清除 MongoDB 数据
+docker compose logs -f yapi        # 查看日志
+docker compose restart yapi        # 重启服务
+docker compose stop                # 停止服务
+docker compose down                # 停止并移除容器（保留数据）
+docker compose down -v             # 停止并清除 MongoDB 数据（慎用）
 ```
 
-配置文件位于 `docker/config.json`，可按需修改端口、数据库连接等。
+### 升级
 
-### 教程
+本 fork 的升级即拉取本仓库最新代码并重建镜像，不会影响已有数据（数据存于 `mongo-data` 数据卷）。
+
+```bash
+git pull                           # 拉取本仓库最新代码
+docker compose up -d --build yapi  # 重新构建并启动
+```
+
+### 配置
+
+配置文件位于 `docker/config.json`（以只读方式挂载到容器内 `/yapi/config.json`），可按需修改端口、数据库连接、邮件等。修改后需 `docker compose up -d --build yapi` 重启生效。
+
+```json
+{
+  "port": "3000",
+  "adminAccount": "admin@admin.com",
+  "timeout": 120000,
+  "db": {
+    "servername": "mongo",
+    "DATABASE": "yapi",
+    "port": 27017
+  },
+  "mail": { "enable": false }
+}
+```
+
+## 从旧版升级到本 fork
+
+如果你之前用 **原版 YApi / YApi Pro**（无论是 `yapi-pro-cli` 部署，还是原作者的 Docker 镜像）安装过，迁移到本 fork 时**数据不需要做任何转换**：YApi 的所有项目、接口、用户数据都存在 MongoDB 中，本 fork 与旧版的数据结构兼容（`server/install.js` 只创建管理员和索引，不修改业务数据）。升级本质上只是**用本 fork 的代码连接到你原来的 MongoDB**。
+
+> ⚠️ 操作前务必备份数据库：`mongodump --db yapi --out ./yapi-backup`
+
+### 方式一：源码替换（适合 yapi-pro-cli / pm2 部署）
+
+```bash
+# 1. 停掉旧服务
+pm2 stop yapi          # 或停止你原来的启动方式
+
+# 2. 用本 fork 的代码替换旧的运行目录（旧版代码在部署目录的 vendors/ 下）
+#    建议直接 clone 本仓库到新目录运行，避免污染旧目录
+
+# 3. 准备 config.json，db 指向你原来的 MongoDB（地址/端口/库名保持和旧版一致）
+
+# 4. 安装依赖（不要再执行 node server/install.js，数据库已初始化过）
+npm install
+
+# 5. 启动
+node server/app.js     # 或 pm2 start server/app.js --name yapi
+```
+
+要点：**不要重新跑 `install.js`**，否则会因管理员邮箱唯一索引冲突而报错；旧库里已有数据，直接启动即可。
+
+### 方式二：切换到本 fork 的 Docker Compose
+
+本仓库自带的 `docker-compose.yml` 会启动一个**全新的空 MongoDB**（`mongo-data` 数据卷）。要复用旧数据，二选一：
+
+**A. 直接连接旧的外部 MongoDB（旧库不在容器里时最简单）**
+
+修改 `docker/config.json`，把 `db.servername` / `port` / `DATABASE` 指向你现有的 MongoDB（例如宿主机 `host.docker.internal` 或局域网地址），并删除 `docker-compose.yml` 中的 `mongo` 服务及 `depends_on`，然后：
+
+```bash
+docker compose up -d --build yapi
+```
+
+`docker/start.sh` 会先尝试 `install.js`，因管理员已存在而失败后，自动检测到旧管理员账号存在，跳过初始化并正常启动——所以连旧库不会重复初始化数据。
+
+**B. 把旧数据导入本 fork 的 MongoDB 容器**
+
+```bash
+# 旧库导出
+mongodump --uri "mongodb://<旧地址>:27017/yapi" --out ./yapi-backup
+
+# 启动本 fork（先用自带 mongo 服务）
+docker compose up -d
+
+# 导入到容器内的 mongo
+docker compose cp ./yapi-backup yapi-mongo-1:/tmp/yapi-backup
+docker compose exec mongo mongorestore --db yapi /tmp/yapi-backup/yapi
+```
+
+导入完成后重启 yapi 服务即可：`docker compose restart yapi`。
+
+### 升级后的账号密码
+
+数据复用后，登录账号和密码**沿用你旧库里的设置**，不会被重置为默认值。
+
+## 源码部署（进阶）
+
+如需脱离 Docker 直接在主机运行：
+
+### 环境要求
+* Node.js 18+（见 `package.json` 的 `engines`）
+* MongoDB 6+
+* git
+
+### 步骤
+
+```bash
+# 1. 安装依赖
+npm install
+
+# 2. 准备 config.json（参考 docker/config.json，将 db.servername 改为本机 MongoDB 地址，如 127.0.0.1）
+
+# 3. 初始化数据库（仅首次）
+node server/install.js
+
+# 4. 启动服务
+node server/app.js
+# 或使用 npm start
+```
+
+如需修改前端代码，使用 `npm run build-client` 重新构建前端资源（产物在 `static/prd`）。
+
+### 使用 pm2 管理进程
+
+```bash
+npm install -g pm2
+pm2 start server/app.js --name yapi
+pm2 info yapi      # 查看服务信息
+pm2 restart yapi   # 重启服务
+pm2 stop yapi      # 停止服务
+```
+
+### 教程（原作者，仅供功能参考）
 * [使用 YApi 管理 API 文档，测试， mock](https://juejin.im/post/5acc879f6fb9a028c42e8822)
 * [自动更新 Swagger 接口数据到 YApi 平台](https://juejin.im/post/5af500e251882567096140dd)
 * [自动化测试](https://juejin.im/post/5a388892f265da430e4f4681)
@@ -151,13 +212,6 @@ docker compose down -v         # 同时清除 MongoDB 数据
 * [yapi-to-typescript：根据 YApi 的接口定义生成 TypeScript 的请求函数](https://github.com/fjc0k/yapi-to-typescript)
 * [yapi-gen-js-code: 根据 YApi 的接口定义生成 javascript 的请求函数](https://github.com/hellosean1025/yapi-gen-js-code)
 
-### YApi docker部署（非官方）
-* [使用 alpine 版 docker 镜像快速部署 yapi](https://www.jianshu.com/p/a97d2efb23c5)
-* [docker-yapi: 基于官方yapi-pro-cli的docker-compose方案](https://github.com/Ryan-Miao/docker-yapi)
-* [docker-compose一键部署yapi](https://github.com/jinfeijie/yapi)
-* [docker-YApi: 更易用的 YApi 镜像](https://github.com/fjc0k/docker-YApi)
-* [使用DockerCompose构建部署Yapi](https://github.com/MyHerux/daily-code/blob/master/Program/%E5%B7%A5%E5%85%B7%E7%AF%87/Yapi/%E4%BD%BF%E7%94%A8DockerCompose%E6%9E%84%E5%BB%BA%E9%83%A8%E7%BD%B2Yapi.md)
-
 ### YApi 一些工具
 * [Api Generator](https://github.com/Forgus/api-generator) 接口文档自动生成插件（零入侵）
 * [mysql服务http工具,可配合做自动化测试](https://github.com/hellosean1025/http-mysql-server)
@@ -165,33 +219,12 @@ docker compose down -v         # 同时清除 MongoDB 数据
 * [idea 接口上传调试插件 easy-yapi](https://easyyapi.com/)
 * [执行 postgres sql 的服务](https://github.com/shouldnotappearcalm/http-postgres-server)
 
-### YApi 的一些客户
-* 去哪儿
-* 携程
-* 艺龙 
-* 美团
-* 百度
-* 腾讯
-* 阿里巴巴
-* 京东
-* 今日头条
-* 唯品支付 
-* 链家网
-* 快手
-* 便利蜂
-* 中商惠民
-* 新浪
-* VIPKID
-* 马蜂窝
-
-### Authors
+### Authors（原项目）
 * [hellosean1025](https://github.com/hellosean1025)
 * [gaoxiaomumu](https://github.com/gaoxiaomumu)
 * [zwjamnsss](https://github.com/amnsss)
 * [dwb1994](https://github.com/dwb1994)
 * [fungezi](https://github.com/fungezi)
 
-
 ### License
 Apache License 2.0
-
