@@ -253,13 +253,13 @@ exports.schemaValidator = function(schema, params) {
   try {
     const ajv = new Ajv({
       format: false,
-      meta: false
+      meta: false,
+      schemaId: 'auto',
+      validateSchema: false
     });
-    let metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
+    const metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
     ajv.addMetaSchema(metaSchema);
-    ajv._opts.defaultMeta = metaSchema.id;
-    ajv._refs['http://json-schema.org/schema'] = 'http://json-schema.org/draft-04/schema';
-    var localize = require('ajv-i18n');
+    const localize = require('ajv-i18n');
 
     schema = schema || {
       type: 'object',

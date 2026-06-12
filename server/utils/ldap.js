@@ -35,8 +35,7 @@ exports.ldapQuery = (username, password) => {
       // 查询结果事件响应
       search.on('searchEntry', entry => {
         if (entry) {
-          // 获取查询对象
-          users.push(entry.object);
+          users.push(entry.pojo || entry.object);
         }
       });
       // 查询错误事件

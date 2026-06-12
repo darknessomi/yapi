@@ -17,7 +17,7 @@ const sandboxFn = require('./sandbox')
 
 
 
-const ejs = require('easy-json-schema');
+const easyJsonSchema = require('../../common/easyJsonSchema');
 
 const jsf = require('json-schema-faker');
 const { schemaValidator } = require('../../common/utils');
@@ -372,7 +372,7 @@ exports.validateParams = (schema2, params) => {
   var localize = require('ajv-i18n');
   delete schema2.closeRemoveAdditional;
 
-  const schema = ejs(schema2);
+  const schema = easyJsonSchema(schema2);
 
   schema.additionalProperties = flag ? true : false;
   const validate = ajv.compile(schema);

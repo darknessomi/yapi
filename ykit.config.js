@@ -143,8 +143,11 @@ module.exports = {
         baseConfig.context = path.resolve(__dirname, './client');
         baseConfig.resolve.alias.client = '/client';
         baseConfig.resolve.alias.common = '/common';
-
         baseConfig.resolve.alias.exts = '/exts';
+        baseConfig.resolve.alias.axios = path.resolve(
+          __dirname,
+          'node_modules/axios/dist/axios.js'
+        );
 
         // baseConfig.resolve.alias.react = 'anujs';
         // baseConfig.resolve.alias['react-dom'] = 'anujs';
@@ -196,7 +199,10 @@ module.exports = {
         });
         baseConfig.module.preLoaders.push({
           test: /\.(js|jsx)$/,
-          include: [path.resolve(__dirname, './node_modules/swagger-client')],
+          include: [
+            path.resolve(__dirname, './node_modules/swagger-client'),
+            path.resolve(__dirname, './node_modules/crypto-js')
+          ],
           loader: 'babel-loader'
         });
         if (this.env == 'prd') {
