@@ -3,9 +3,45 @@
 本仓库 fork 自 [YApi](https://github.com/YMFE/yapi) / YApi Pro，原作者已停止维护。
 本 fork 在原有功能基础上做兼容性修复，并提供开箱即用的 Docker Compose 部署方案。
 
-> 说明：原 YApi Pro 的在线版（yapi.pro）、官方 Docker 镜像（yapipro/yapi）、
+> 说明：原 YApi Pro 的在线版（yapi.pro）、官方 Docker 镜像（`yapipro/yapi`）、
 > `yapi-pro-cli` 命令行升级机制、官方交流群等均由原作者运营，**与本 fork 无关，已不再适用**。
 > 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
+
+### 相比原版 YMFE/yapi 的优势
+
+以下数据在 2026-06-13 实测，对比本 fork **v1.10.0** 与原版 [YMFE/yapi v1.11.0](https://github.com/YMFE/yapi)（npm 镜像：`registry.npmmirror.com`）。Docker 构建的核心步骤是 `npm install --omit=dev`，因此以该步骤等效测量；完整 Docker 镜像构建/运行需在支持 overlayfs 的环境执行 `scripts/benchmark-docker.sh` 复现。
+
+| 指标 | 本 fork (v1.10.0) | 原版 YMFE/yapi (v1.11.0) |
+|------|-------------------|--------------------------|
+| 运行时 | Node 20 + MongoDB 6 + Koa 3 | Node 7.6+ / Mongoose 5 + Koa 2 |
+| 生产依赖数量 | **35** | 55 |
+| `npm install --omit=dev` | **5 s** | 127 s（约 **25× 慢**） |
+| `npm ci` 重装（有 lockfile） | **4.6 s** | 原版 lockfile 含失效淘宝源，无法可靠复现 |
+| 前端构建工具 | **Vite 7** | ykit + webpack 2 |
+| 前端生产构建 | **18 s** | **无法完成**（node-sass 4.x 在现代 Node 已无法编译） |
+| 前端产物 gzip | JS 1.6 MB + CSS 177 KB（内置 gzip） | 无 gzip 预压缩 |
+| 单元测试 | Vitest 4，41 项 / **0.5 s** | Ava + babel-register，需额外配置 |
+| Docker Compose | **开箱即用**（含 MongoDB 6 健康检查） | 无官方 Docker 方案 |
+| Docker 增量重建 | **秒级**（`package.json` 分层缓存，改业务代码不重装依赖） | — |
+| CI | GitHub Actions（lint / test / build） | 无 |
+
+**结论（可验证的硬优势，不是营销话术）：**
+
+1. **部署**：一条 `docker compose up -d --build` 搞定，原版需自行配 Node、MongoDB、PM2，且无官方容器方案。
+2. **构建速度**：生产依赖安装快约 25 倍；前端从不可维护的 ykit 迁到 Vite，在现代 Node 20 上 18 秒出产物，原版连 `npm install` 都会因 node-sass / 过期 lockfile 失败。
+3. **依赖健康度**：生产依赖从 55 个精简到 35 个；去掉 `request`、`ldapjs`、`vm2` 等已废弃/有 CVE 的包，升级到 Mongoose 6、ajv 8、axios 1.x。
+4. **传输优化**：静态资源预 gzip + 修复 Content-Type，减少首屏加载体积。
+5. **可维护性**：Vitest + GitHub Actions 保证每次提交可自动验证；原版测试框架 Ava 已停止主流采用。
+
+复现命令：
+
+```bash
+# 本地等效基准（无需 Docker）
+./scripts/benchmark-native.sh
+
+# 完整 Docker 对比（需 Docker 可用）
+./scripts/benchmark-docker.sh
+```
 
 ### 最近更新
 **v1.10.0** (2026-06-13)
@@ -51,7 +87,7 @@ YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大
 ### 安装与启动
 
 ```bash
-# 构建并启动（首次约 4 分钟；仅改业务代码时 rebuild 约数秒）
+# 构建并启动（首次含镜像拉取约 1–2 分钟；npm 依赖层约 5 s；仅改业务代码时 rebuild 约数秒）
 docker compose up -d --build
 
 # 访问 http://127.0.0.1:3000
