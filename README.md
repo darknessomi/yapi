@@ -9,7 +9,7 @@
 
 ### 相比原版 YMFE/yapi 的优势
 
-以下数据在 2026-06-13 实测，对比本 fork **v1.10.0** 与原版 [YMFE/yapi v1.11.0](https://github.com/YMFE/yapi)（npm 镜像：`registry.npmmirror.com`）。Docker 构建的核心步骤是 `npm install --omit=dev`，因此以该步骤等效测量；完整 Docker 镜像构建/运行需在支持 overlayfs 的环境执行 `scripts/benchmark-docker.sh` 复现。
+以下数据由 GitHub Actions [Performance Benchmark](.github/workflows/benchmark.yml) 在 CI 中自动对比本 fork 与 [YMFE/yapi v1.11.0](https://github.com/YMFE/yapi)。也可本地复现：`./scripts/benchmark-ci.sh`。下表为 2026-06-13 首次实测快照；最新结果见 Actions Artifacts 或 workflow Summary。
 
 | 指标 | 本 fork (v1.10.0) | 原版 YMFE/yapi (v1.11.0) |
 |------|-------------------|--------------------------|
@@ -36,10 +36,13 @@
 复现命令：
 
 ```bash
-# 本地等效基准（无需 Docker）
+# CI 同等流程（推荐，含 native + Docker）
+./scripts/benchmark-ci.sh
+
+# 仅 native 对比
 ./scripts/benchmark-native.sh
 
-# 完整 Docker 对比（需 Docker 可用）
+# 仅 Docker 对比
 ./scripts/benchmark-docker.sh
 ```
 

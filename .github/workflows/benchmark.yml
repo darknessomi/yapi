@@ -1,0 +1,43 @@
+name: Performance Benchmark
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1'
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/benchmark*.sh'
+      - '.github/workflows/benchmark.yml'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'package.json'
+      - 'package-lock.json'
+
+concurrency:
+  group: benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compare:
+    name: Fork vs YMFE/yapi
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+
+      - name: Run performance benchmark
+        env:
+          NPM_REGISTRY: https://registry.npmjs.org
+        run: |
+          chmod +x scripts/benchmark-ci.sh scripts/benchmark-native.sh scripts/benchmark-docker.sh
+          ./scripts/benchmark-ci.sh
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results
+          path: benchmark-results/
+          retention-days: 30
