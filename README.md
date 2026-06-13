@@ -9,8 +9,10 @@
 
 ### 最近更新
 **v1.10.0** (2026-06-13)
-1. 升级 Vite 至 v7、Vitest 至 v4
-2. 同步升级 @vitejs/plugin-react 以匹配 Vite 7 peer dependency
+1. 前端构建从 ykit 迁移至 Vite，升级 Vite 至 v7、Vitest 至 v4
+2. 单元测试迁移至 Vitest，新增 GitHub Actions CI
+3. 升级 Node 20 / Koa 3 / Mongoose 6 / ajv v8 等核心依赖
+4. 重写部署升级文档，修复 Docker config.json 加载
 
 **v1.9.6** (2026-06-12)
 1. 增加 Docker Compose 本地部署方案

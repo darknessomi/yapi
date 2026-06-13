@@ -1,6 +1,18 @@
 ## v1.10.0
+* feat(build): 前端构建从 ykit 迁移至 Vite
 * build: 升级 Vite 至 v7 与 Vitest 至 v4
 * build: 同步升级 @vitejs/plugin-react 以匹配 Vite 7
+* test: 单元测试框架从 Ava 迁移至 Vitest
+* chore(ci): 添加 GitHub Actions（lint / test / build）
+* fix: 修复 Docker 环境下 config.json 加载问题
+* chore(deps): 升级 Node 20 与 Koa 3 生态
+* build(deps): 适配 Mongoose 6 并升级 ajv 至 v8
+* build(deps): 升级核心 npm 依赖并适配 API 变更
+* build(deps): 升级前端依赖并抽取 dayjs 与 match-api 模块
+* build(deps): 升级 markdown 依赖并迁移 @toast-ui/editor
+* build(deps): 升级 less 至 3.x 并静默 Sass 弃用警告
+* docs: 清理失效内容并重写部署升级文档
+* docs: 更新仓库描述与文档指向 darknessomi/yapi
 
 ## v1.9.6
 * feat: 增加 Docker Compose 本地 Demo 部署方案
