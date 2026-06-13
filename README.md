@@ -14,13 +14,6 @@
 3. 升级 Node 20 / Koa 3 / Mongoose 6 / ajv v8 等核心依赖
 4. 重写部署升级文档，修复 Docker config.json 加载
 
-**v1.9.6** (2026-06-12)
-1. 增加 Docker Compose 本地部署方案
-2. 优化 Dockerfile 构建缓存，加快 rebuild 速度
-3. 修复 gzip 静态资源 Content-Type 错误导致样式丢失的问题
-4. 补充 extend 生产依赖
-5. 升级运行环境至 Node 20 / MongoDB 6
-
 ## YApi 可视化接口管理平台
 
 YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大</strong>的 api 管理平台，旨在为开发、产品、测试人员提供更优雅的接口管理服务。可以帮助开发者轻松创建、发布、维护 API，YApi 还为用户提供了优秀的交互体验，开发人员只需利用平台提供的接口数据写入工具以及简单的点击操作就可以实现接口的管理。
