@@ -1,3 +1,7 @@
+## v1.10.0
+* build: 升级 Vite 至 v7 与 Vitest 至 v4
+* build: 同步升级 @vitejs/plugin-react 以匹配 Vite 7
+
 ## v1.9.6
 * feat: 增加 Docker Compose 本地 Demo 部署方案
 * build: 优化 Dockerfile 分层缓存，加快 rebuild 速度

@@ -8,6 +8,10 @@
 > 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
 
 ### 最近更新
+**v1.10.0** (2026-06-13)
+1. 升级 Vite 至 v7、Vitest 至 v4
+2. 同步升级 @vitejs/plugin-react 以匹配 Vite 7 peer dependency
+
 **v1.9.6** (2026-06-12)
 1. 增加 Docker Compose 本地部署方案
 2. 优化 Dockerfile 构建缓存，加快 rebuild 速度
