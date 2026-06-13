@@ -1,4 +1,5 @@
-process.env.NODE_PATH = __dirname;
+const path = require('path');
+process.env.NODE_PATH = [path.join(__dirname, '..'), __dirname].join(path.delimiter);
 require('module').Module._initPaths();
 
 const yapi = require('./yapi.js');

@@ -236,9 +236,10 @@ class View extends Component {
     });
   };
 
-  copyUrl = url => {
-    copy(url);
-    message.success('已经成功复制到剪切板');
+  copyUrl = async url => {
+    if (await copy(url)) {
+      message.success('已经成功复制到剪切板');
+    }
   };
 
   flagMsg = (mock, strice) => {

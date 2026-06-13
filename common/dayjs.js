@@ -6,12 +6,16 @@ dayjs.extend(customParseFormat);
 const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
+function invalidDate() {
+  return dayjs(NaN);
+}
+
 /**
  * Safari 兼容的日期解析，支持 ISO、'YYYY-MM-DD HH:mm:ss' 与时间戳。
  */
 function parseDate(val) {
   if (val == null || val === '') {
-    return dayjs.invalid();
+    return invalidDate();
   }
   if (typeof val === 'number') {
     return val < 1e12 ? dayjs.unix(val) : dayjs(val);
@@ -41,18 +45,21 @@ function parseDate(val) {
 
 /** Unix 秒时间戳 → 'YYYY-MM-DD HH:mm:ss' */
 function formatTime(timestamp) {
-  return parseDate(timestamp).format(DATE_TIME_FORMAT);
+  const date = parseDate(timestamp);
+  return date.isValid() ? date.format(DATE_TIME_FORMAT) : '';
 }
 
 /** 日期 → 'YYYY-MM-DD'（joinStr 可自定义分隔符） */
 function formatYMD(val, joinStr = '-') {
   const fmt = joinStr === '-' ? DATE_FORMAT : `YYYY${joinStr}MM${joinStr}DD`;
-  return parseDate(val).format(fmt);
+  const date = parseDate(val);
+  return date.isValid() ? date.format(fmt) : '';
 }
 
 /** 日期 → 'YYYY-MM-DD  HH:mm:ss'（与 wiki 插件历史格式一致，日期与时间间双空格） */
 function formatDate(val) {
-  return parseDate(val).format('YYYY-MM-DD  HH:mm:ss');
+  const date = parseDate(val);
+  return date.isValid() ? date.format('YYYY-MM-DD  HH:mm:ss') : '';
 }
 
 module.exports = {

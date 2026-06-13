@@ -10,7 +10,7 @@ const argsSeparateChar = ',';
 
 const md5 = require('md5');
 const sha = require('sha.js');
-const Base64 = require('js-base64').Base64;
+const { Base64 } = require('js-base64');
 
 const stringHandles = {
   md5: function(str) {

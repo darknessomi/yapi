@@ -31,4 +31,11 @@ describe('dayjs helpers', () => {
   it('parseDate handles space-separated datetime', () => {
     expect(parseDate('2017-01-17 00:00:00').format('YYYY-MM-DD')).toBe('2017-01-17');
   });
+
+  it('parseDate handles null and empty values', () => {
+    expect(parseDate(null).isValid()).toBe(false);
+    expect(parseDate('').isValid()).toBe(false);
+    expect(formatTime(null)).toBe('');
+    expect(formatTime(undefined)).toBe('');
+  });
 });

@@ -22,7 +22,7 @@ import axios from 'axios';
 import CaseReport from './CaseReport.js';
 import _ from 'underscore';
 import { initCrossRequest } from 'client/components/Postman/CheckCrossInstall.js';
-import produce from 'immer';
+import { produce } from 'immer';
 import {InsertCodeMap} from 'client/components/Postman/Postman.js'
 
 const plugin = require('client/plugin.js');
@@ -580,9 +580,10 @@ class InterfaceColContent extends Component {
     });
   };
 
-  copyUrl = url => {
-    copy(url);
-    message.success('已经成功复制到剪切板');
+  copyUrl = async url => {
+    if (await copy(url)) {
+      message.success('已经成功复制到剪切板');
+    }
   };
 
   modeChange = mode => {

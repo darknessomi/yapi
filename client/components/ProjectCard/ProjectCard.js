@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { debounce } from '../../common';
 import constants from '../../constants/variable.js';
-import produce from 'immer';
+import { produce } from 'immer';
 import { getProject, checkProjectName, copyProjectMsg } from '../../reducer/modules/project';
 import { trim } from '../../common.js';
 const confirm = Modal.confirm;

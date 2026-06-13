@@ -31,9 +31,10 @@ class ProjectToken extends Component {
     await this.props.getToken(this.props.projectId);
   }
 
-  copyToken = () => {
-    copy(this.props.token);
-    message.success('已经成功复制到剪切板');
+  copyToken = async () => {
+    if (await copy(this.props.token)) {
+      message.success('已经成功复制到剪切板');
+    }
   };
 
   updateToken = () => {

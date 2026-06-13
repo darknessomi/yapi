@@ -64,12 +64,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 
-let nullableConfig = null;
-try {
-  nullableConfig = require('./config.json');
-} catch (ignore) {
-}
-
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production';
 
@@ -110,22 +104,13 @@ export default defineConfig(({ mode }) => {
         client: path.resolve(__dirname, 'client'),
         common: path.resolve(__dirname, 'common'),
         exts: path.resolve(__dirname, 'exts'),
-        axios: path.resolve(__dirname, 'node_modules/axios/dist/axios.js'),
-        events: path.resolve(__dirname, 'common/events-shim.js'),
-        'json-schema-editor-visual': path.resolve(
-          __dirname,
-          'node_modules/json-schema-editor-visual/package/index.js'
-        )
-      },
-      extensions: ['.js', '.jsx', '.json']
+        'js-base64': path.resolve(__dirname, 'node_modules/js-base64/base64.js')
+      }
     },
     define: {
       global: 'globalThis',
       'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'dev'),
-      'process.env.version': JSON.stringify(pkg.version),
-      'process.env.versionNotify': JSON.stringify(
-        nullableConfig && nullableConfig.versionNotify ? nullableConfig.versionNotify : ''
-      )
+      'process.env.version': JSON.stringify(pkg.version)
     },
     css: {
       preprocessorOptions: {
@@ -136,10 +121,6 @@ export default defineConfig(({ mode }) => {
           silenceDeprecations: ['legacy-js-api', 'import', 'slash-div']
         }
       }
-    },
-    esbuild: {
-      loader: 'jsx',
-      include: /\.js$/
     },
     optimizeDeps: {
       esbuildOptions: {
@@ -176,7 +157,6 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       manifest: true,
       sourcemap: false,
-      cssCodeSplit: true,
       rollupOptions: {
         input: path.resolve(__dirname, 'client/index.html'),
         output: {
