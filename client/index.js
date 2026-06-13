@@ -1,5 +1,6 @@
 import './styles/common.scss';
 import './styles/theme.less';
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 import LocaleProvider from 'antd/lib/locale-provider';
 import './plugin';
 import React from 'react';

@@ -11,15 +11,18 @@ import EasyDragSort from '../../../../components/EasyDragSort/EasyDragSort.js';
 import mockEditor from 'client/components/AceEditor/mockEditor';
 import AceEditor from 'client/components/AceEditor/AceEditor';
 import axios from 'axios';
-import Editor from 'common/tui-editor/dist/tui-editor-Editor-all.min.js';
+import {
+  createMarkdownEditor,
+  destroyMarkdownEditor,
+  getEditorHtml,
+  getEditorMarkdown
+} from 'client/components/MarkdownEditor/createEditor.js';
 import jSchema from 'json-schema-editor-visual';
 const ResBodySchema = jSchema({ lang: 'zh_CN', mock: constants.MOCK_SOURCE });
 const ReqBodySchema = jSchema({ lang: 'zh_CN', mock: constants.MOCK_SOURCE });
 const TabPane = Tabs.TabPane;
 
 
-import 'common/tui-editor/dist/tui-editor.min.css';
-import 'common/tui-editor/dist/tui-editor-contents.min.css';
 import './editor.css';
 
 
@@ -233,8 +236,8 @@ class InterfaceEditForm extends Component {
           }
         }, 3000);
         if (!err) {
-          values.desc = this.editor.getHtml();
-          values.markdown = this.editor.getMarkdown();
+          values.desc = getEditorHtml(this.editor);
+          values.markdown = getEditorMarkdown(this.editor);
           if (values.res_body_type === 'json') {
             if (this.state.res_body && validJson(this.state.res_body) === false) {
               return message.error('返回body json格式有问题，请检查！');
@@ -382,15 +385,14 @@ class InterfaceEditForm extends Component {
       readOnly: true
     });
 
-    this.editor = new Editor({
+    this.editor = createMarkdownEditor({
       el: document.querySelector('#desc'),
-      initialEditType: 'wysiwyg',
-      height: '500px',
       initialValue: this.state.markdown || this.state.desc
     });
   }
 
   componentWillUnmount() {
+    destroyMarkdownEditor(this.editor);
     EditFormContext.props.changeEditStatus(false);
     EditFormContext = null;
     this._isMounted = false;

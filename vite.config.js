@@ -147,9 +147,8 @@ export default defineConfig(({ mode }) => {
           '.js': 'jsx'
         }
       },
-      exclude: ['tui-editor'],
-      needsInterop: ['json-schema-editor-visual'],
       include: [
+        '@toast-ui/editor',
         'swagger-client',
         'crypto-js',
         'react',
@@ -164,7 +163,8 @@ export default defineConfig(({ mode }) => {
         'json5',
         'axios',
         'recharts'
-      ]
+      ],
+      needsInterop: ['json-schema-editor-visual']
     },
     server: {
       host: '127.0.0.1',

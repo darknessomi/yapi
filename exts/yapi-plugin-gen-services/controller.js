@@ -4,9 +4,7 @@ const projectModel = require('models/project.js');
 // const wikiModel = require('../yapi-plugin-wiki/wikiModel.js');
 const interfaceCatModel = require('models/interfaceCat.js');
 const yapi = require('yapi.js');
-const markdownIt = require('markdown-it');
-const markdownItAnchor = require('markdown-it-anchor');
-const markdownItTableOfContents = require('markdown-it-table-of-contents');
+const { createExportMarkdownIt } = require('../../common/markdownItExport');
 const defaultTheme = require('./defaultTheme.js');
 const md = require('../../common/markdown');
 
@@ -134,12 +132,7 @@ class exportController extends baseController {
 
     async function createHtml(list) {
       let md = await createMarkdown.bind(this)(list, true);
-      let markdown = markdownIt({ html: true, breaks: true });
-      markdown.use(markdownItAnchor); // Optional, but makes sense as you really want to link to something
-      markdown.use(markdownItTableOfContents, {
-        markerPattern: /^\[toc\]/im
-      });
-
+      let markdown = createExportMarkdownIt();
       // require('fs').writeFileSync('./a.markdown', md);
       let tp = unescape(markdown.render(md));
       // require('fs').writeFileSync('./a.html', tp);

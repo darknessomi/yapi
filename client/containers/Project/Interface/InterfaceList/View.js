@@ -496,7 +496,7 @@ class View extends Component {
         {this.props.curData.desc && <h2 className="interface-title">备注</h2>}
         {this.props.curData.desc && (
           <div
-            className="tui-editor-contents"
+            className="toastui-editor-contents"
             style={{ margin: '0px', padding: '0px 20px', float: 'none' }}
             dangerouslySetInnerHTML={{ __html: this.props.curData.desc }}
           />

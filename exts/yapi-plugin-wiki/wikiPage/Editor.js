@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Checkbox } from 'antd';
-import Editor from 'common/tui-editor/dist/tui-editor-Editor-all.min.js';
-import 'common/tui-editor/dist/tui-editor.min.css';
-import 'common/tui-editor/dist/tui-editor-contents.min.css';
+import {
+  createMarkdownEditor,
+  destroyMarkdownEditor,
+  getEditorHtml,
+  getEditorMarkdown
+} from 'client/components/MarkdownEditor/createEditor.js';
 class WikiEditor extends Component {
   constructor(props) {
     super(props);
@@ -19,17 +22,19 @@ class WikiEditor extends Component {
   };
 
   componentDidMount() {
-    this.editor = new Editor({
+    this.editor = createMarkdownEditor({
       el: document.querySelector('#desc'),
-      initialEditType: 'wysiwyg',
-      height: '500px',
       initialValue: this.props.desc
     });
   }
 
+  componentWillUnmount() {
+    destroyMarkdownEditor(this.editor);
+  }
+
   onUpload = () => {
-    let desc = this.editor.getHtml();
-    let markdown = this.editor.getMarkdown();
+    let desc = getEditorHtml(this.editor);
+    let markdown = getEditorMarkdown(this.editor);
     this.props.onUpload(desc, markdown);
   };
 
