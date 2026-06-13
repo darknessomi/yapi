@@ -51,7 +51,6 @@
   * [插件列表](plugin-list.md)
   * [钩子](plugin-hooks.md)
 * [二次开发](redev.md)
-* [依赖维护性审计](dependency-audit.md)
 
 ---
 * [常见问题解答](qa.md)
