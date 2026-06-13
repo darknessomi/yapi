@@ -130,7 +130,7 @@ hooks = {
    * @param Object importDataModule
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-import-swagger插件
+   * 可参考 exts/yapi-plugin-import-swagger 插件
    * importDataModule = {};
    *
    */
@@ -161,7 +161,7 @@ hooks = {
    * @param InterfaceTabs
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-advanced-mock
+   * 可参考 exts/yapi-plugin-advanced-mock
    * let InterfaceTabs = {
       view: {
         component: View,
@@ -187,7 +187,7 @@ hooks = {
    * @param HeaderMenu
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-statistics
+   * 可参考 exts/yapi-plugin-statistics
    * let HeaderMenu = {
   user: {
     path: '/user/profile',
@@ -227,7 +227,7 @@ hooks = {
    * @param AppRoute
    *
    * @info
-   * 可参考 vendors/exts/yapi-plugin-statistics
+   * 可参考 exts/yapi-plugin-statistics
    * 添加位置在Application.js 中
    * let AppRoute = {
   home: {

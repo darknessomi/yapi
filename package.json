@@ -20,7 +20,6 @@
     "lint": "eslint client server exts scripts --ext .js,.jsx",
     "prebuild-client": "npm run generate-plugin-module",
     "build-client": "vite build && node scripts/generate-assets.js && node scripts/gzip-prd.js",
-    "npm-publish": "node ./npm-publish.js",
     "docs": "ydoc build"
   },
   "repository": {
@@ -97,9 +96,6 @@
     "reactabular-table": "^8.14.0",
     "recharts": "^3.8.1",
     "redux": "^4.2.1",
-    "redux-devtools": "^3.7.0",
-    "redux-devtools-dock-monitor": "^1.2.0",
-    "redux-devtools-log-monitor": "^1.4.0",
     "sass": "^1.101.0",
     "table-resolver": "^4.1.1",
     "vite": "^7.3.5",
