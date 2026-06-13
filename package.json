@@ -53,7 +53,7 @@
     "mockjs": "^1.1.0",
     "mongoose": "^6.13.9",
     "node-schedule": "^2.1.1",
-    "nodemailer": "^6.10.1",
+    "nodemailer": "^8.0.5",
     "qs": "^6.15.2",
     "sha.js": "^2.4.12",
     "swagger-client": "^3.37.4",
