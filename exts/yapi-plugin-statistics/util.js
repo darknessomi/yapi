@@ -1,3 +1,5 @@
+const { formatYMD, parseDate } = require('common/dayjs.js');
+
 /**
  * 获取所需要的日期区间点
  * @param time {Number} Number是ele日期区间选择组件返回的结果
@@ -14,15 +16,12 @@ exports.getDateRange = (time = 90, start = false, withToday = true) => {
         if (!withToday) {
             endTime -= 86400000;
         }
-        return [this.formatYMD(endTime - gapTime), this.formatYMD(endTime - 1000)];
+        return [formatYMD(endTime - gapTime), formatYMD(endTime - 1000)];
     }
-    const startTime = dateSpacialWithSafari(start);
+    const startTime = parseDate(start).valueOf();
     const endTime = startTime + (gapTime - 1000);
-    return [start, this.formatYMD(endTime)];
+    return [start, formatYMD(endTime)];
 }
-
-// 时间
-const convert2Decimal = num => (num > 9 ? num : `0${num}`)
 
 /**
  * 获取距今天之前多少天的所有时间
@@ -38,7 +37,7 @@ exports.getDateInterval = (time = 30) => {
     let timeList = []
     for (let i = 0; i < time; i++) {
         const gapTime = i * 24 * 3600 * 1000;
-        const time = this.formatYMD(endTime - gapTime);
+        const time = formatYMD(endTime - gapTime);
         timeList.push(time);
     }
     return timeList;
@@ -68,23 +67,7 @@ const getNowMidnightDate = (time) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 }
 
-/**
- * 格式化年、月、日
- * @param val {Object or String or Number} 日期对象 或是可new Date的对象或时间戳
- * @return {String} 2017-01-20
- */
-exports.formatYMD = (val, joinStr = '-') => {
-    let date = val;
-    if (typeof val !== 'object') {
-        date = new Date(val);
-    }
-    return `${[
-        date.getFullYear(),
-        convert2Decimal(date.getMonth() + 1),
-        convert2Decimal(date.getDate())
-    ].join(joinStr)}`;
-}
-
+exports.formatYMD = formatYMD;
 
 /**
  * 获取所需的时间差值,
@@ -93,27 +76,9 @@ exports.formatYMD = (val, joinStr = '-') => {
  * @return {Number} 3
  */
 exports.getDayGapFromRange = dateRange => {
-    const startTime = dateSpacialWithSafari(dateRange[0]);
-    const endTime = dateSpacialWithSafari(dateRange[1]);
+    const startTime = parseDate(dateRange[0]).valueOf();
+    const endTime = parseDate(dateRange[1]).valueOf();
     return Math.ceil((endTime - startTime) / 86400000);
-}
-
-
-/**
- * dateSpacialWithSafari 格式话safari下通用的格式
- * @param str {String} 2017-04-19T11:01:19.074+0800 or 2017-10-10 10:10:10
- * @return {number} date.getTime()
- */
-const dateSpacialWithSafari = str => {
-    if (str.indexOf('T') > -1) {
-        let date;
-        str.replace(/(\d{4})-(\d{2})-(\d{2})\w(\d{2}):(\d{2}):(\d{2})/, (match, p1, p2, p3, p4, p5, p6) => {
-            date = new Date(p1, +p2 - 1, p3, p4, p5, p6);
-            return;
-        })
-        return date.getTime();
-    }
-    return new Date(str.replace(/-/g, '/')).getTime();
 }
 
 /**

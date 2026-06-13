@@ -2,21 +2,15 @@ import { createRequire } from 'module';
 import { describe, it, expect } from 'vitest';
 
 const require = createRequire(import.meta.url);
-const rewire = require('rewire');
-const lib = rewire('../common/lib.js');
-
-const plugin = rewire('../common/plugin.js');
-const initPlugins = plugin.initPlugins;
+const lib = require('../common/lib.js');
+const { initPlugins } = require('../common/plugin.js');
 
 describe('lib', () => {
   it('initPlugins', () => {
-    plugin.__set__('getPluginConfig', function () {
-      return {
-        server: true,
-        client: true
-      };
-    });
-    let configs = initPlugins(['a', 'b'], 'exts');
+    let configs = initPlugins(['a', 'b'], 'exts', () => ({
+      server: true,
+      client: true
+    }));
     expect(configs).toEqual([
       {
         name: 'a',
@@ -34,13 +28,10 @@ describe('lib', () => {
   });
 
   it('initPlugins2', () => {
-    plugin.__set__('getPluginConfig', function () {
-      return {
-        server: true,
-        client: false
-      };
-    });
-    let configs = initPlugins(['a', 'b'], 'exts');
+    let configs = initPlugins(['a', 'b'], 'exts', () => ({
+      server: true,
+      client: false
+    }));
     expect(configs).toEqual([
       {
         name: 'a',
@@ -58,13 +49,10 @@ describe('lib', () => {
   });
 
   it('initPlugins3', () => {
-    plugin.__set__('getPluginConfig', function () {
-      return {
-        server: false,
-        client: true
-      };
-    });
-    let configs = initPlugins(['a', { name: 'a' }], 'exts');
+    let configs = initPlugins(['a', { name: 'a' }], 'exts', () => ({
+      server: false,
+      client: true
+    }));
     expect(configs).toEqual([
       {
         name: 'a',
@@ -76,12 +64,6 @@ describe('lib', () => {
   });
 
   it('initPlugins4', () => {
-    plugin.__set__('getPluginConfig', function () {
-      return {
-        server: false,
-        client: true
-      };
-    });
     let configs = initPlugins(
       [
         {
@@ -94,7 +76,11 @@ describe('lib', () => {
           }
         }
       ],
-      'exts'
+      'exts',
+      () => ({
+        server: false,
+        client: true
+      })
     );
     expect(configs).toEqual([
       {
@@ -113,13 +99,10 @@ describe('lib', () => {
   });
 
   it('initPlugins5', () => {
-    plugin.__set__('getPluginConfig', function () {
-      return {
-        server: false,
-        client: false
-      };
-    });
-    let configs = initPlugins(['a', 'b'], 'exts');
+    let configs = initPlugins(['a', 'b'], 'exts', () => ({
+      server: false,
+      client: false
+    }));
     expect(configs).toEqual([]);
   });
 

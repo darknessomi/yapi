@@ -22,7 +22,7 @@ function getPluginConfig(name, type) {
 /**
    * type @string enum[plugin, ext] plugin是外部插件，ext是内部插件
    */
-exports.initPlugins = function (plugins, type) {
+exports.initPlugins = function (plugins, type, getConfig = getPluginConfig) {
   if (!plugins) {
     return [];
   }
@@ -33,10 +33,10 @@ exports.initPlugins = function (plugins, type) {
   plugins = plugins.map(item => {
     let pluginConfig;
     if (item && typeof item === 'string') {
-      pluginConfig = getPluginConfig(item, type);
+      pluginConfig = getConfig(item, type);
       return Object.assign({}, pluginConfig, { name: item, enable: true })
     } else if (item && typeof item === 'object') {
-      pluginConfig = getPluginConfig(item.name, type);
+      pluginConfig = getConfig(item.name, type);
       return Object.assign({},
         pluginConfig,
         {

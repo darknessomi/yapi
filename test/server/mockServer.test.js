@@ -1,10 +1,5 @@
-import { createRequire } from 'module';
 import { describe, it, expect } from 'vitest';
-
-const require = createRequire(import.meta.url);
-const rewire = require('rewire');
-const mockServer = rewire('../../server/middleware/mockServer.js');
-const matchApi = mockServer.__get__('matchApi');
+import { matchApi } from '../../common/match-api.js';
 
 describe('mockServer', () => {
   it('matchApi', () => {

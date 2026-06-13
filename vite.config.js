@@ -158,7 +158,7 @@ export default defineConfig(({ mode }) => {
         'react-redux',
         'react-router-dom',
         'mockjs',
-        'brace',
+        'ace-builds',
         'json5',
         'axios',
         'recharts'

@@ -1,15 +1,16 @@
-import ace from 'brace';
+import ace from 'ace-builds/src-noconflict/ace';
 import Mock from 'mockjs';
-import 'brace/mode/javascript';
-import 'brace/mode/json';
-import 'brace/mode/xml';
-import 'brace/mode/html';
-import 'brace/theme/xcode';
-import 'brace/ext/language_tools.js';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/mode-xml';
+import 'ace-builds/src-noconflict/mode-html';
+import 'ace-builds/src-noconflict/mode-text';
+import 'ace-builds/src-noconflict/theme-xcode';
+import 'ace-builds/src-noconflict/ext-language_tools';
 import json5 from 'json5';
 import MockExtra from 'common/mock-extra.js';
 
-var langTools = ace.acequire('ace/ext/language_tools'),
+var langTools = ace.require('ace/ext/language_tools'),
   wordList = [
     { name: '字符串', mock: '@string' },
     { name: '自然数', mock: '@natural' },
@@ -60,8 +61,8 @@ var langTools = ace.acequire('ace/ext/language_tools'),
     { name: '协议', mock: '@protocol' }
   ];
 
-let dom = ace.acequire('ace/lib/dom');
-ace.acequire('ace/commands/default_commands').commands.push({
+let dom = ace.require('ace/lib/dom');
+ace.require('ace/commands/default_commands').commands.push({
   name: 'Toggle Fullscreen',
   bindKey: 'F9',
   exec: function(editor) {

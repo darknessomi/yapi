@@ -8,12 +8,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['test/**/*.test.js'],
-    pool: 'forks',
-    server: {
-      deps: {
-        inline: ['rewire']
-      }
-    }
+    pool: 'forks'
   },
   resolve: {
     alias: {

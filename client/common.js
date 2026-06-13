@@ -76,11 +76,7 @@ exports.checkAuth = (action, role) => {
   return Roles[roleAction[action]] <= Roles[role];
 };
 
-exports.formatTime = timestamp => {
-  const date = new Date(Number(timestamp) * 1000);
-  const pad = value => String(value).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-};
+exports.formatTime = require('common/dayjs.js').formatTime;
 
 // 防抖函数，减少高频触发的函数执行的频率
 // 请在 constructor 里使用:
