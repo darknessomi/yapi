@@ -90,7 +90,7 @@
     "react-router-dom": "^4.3.1",
     "reactabular-dnd": "^8.16.0",
     "reactabular-table": "^8.14.0",
-    "recharts": "^1.8.6",
+    "recharts": "^3.8.1",
     "redux": "^4.2.1",
     "redux-devtools": "^3.7.0",
     "redux-devtools-dock-monitor": "^1.2.0",
