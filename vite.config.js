@@ -133,7 +133,7 @@ export default defineConfig(({ mode }) => {
           javascriptEnabled: true
         },
         scss: {
-          silenceDeprecations: ['legacy-js-api']
+          silenceDeprecations: ['legacy-js-api', 'import', 'slash-div']
         }
       }
     },
