@@ -1,86 +1,105 @@
-import test from 'ava';
+import { describe, it, expect } from 'vitest';
 import {
   ltrim,
   rtrim,
   trim,
   handleParams,
-  verifyPath, 
+  verifyPath,
   sandbox,
   handleVarPath
 } from '../../server/utils/commons.js';
 
-test('trim', t => {
-    t.is(trim(" a   b  ksjdfk    "), 'a   b  ksjdfk');
-    t.is(trim(1), '1')
-});
+describe('commons', () => {
+  it('trim', () => {
+    expect(trim(' a   b  ksjdfk    ')).toBe('a   b  ksjdfk');
+    expect(trim(1)).toBe('1');
+  });
 
-test('ltrim', t => {
-  t.is(ltrim(" a   b  ksjdfk    "), 'a   b  ksjdfk    ');
-  t.is(ltrim(1), '1')
-});
+  it('ltrim', () => {
+    expect(ltrim(' a   b  ksjdfk    ')).toBe('a   b  ksjdfk    ');
+    expect(ltrim(1)).toBe('1');
+  });
 
-test('rtrim', t => {
-  t.is(rtrim(" a   b  ksjdfk    "), ' a   b  ksjdfk');
-  t.is(rtrim(1), '1')
-});
+  it('rtrim', () => {
+    expect(rtrim(' a   b  ksjdfk    ')).toBe(' a   b  ksjdfk');
+    expect(rtrim(1)).toBe('1');
+  });
 
-test('handleParams', t=>{
-    t.deepEqual(handleParams({
-        a: '  s k ',
-        b: " a123456 "
-    }, {
-        a: 'string',
-        b: 'number'
-    }), {
-        a: 's k',
-        b: 0
-    })
-})
+  it('handleParams', () => {
+    expect(
+      handleParams(
+        {
+          a: '  s k ',
+          b: ' a123456 '
+        },
+        {
+          a: 'string',
+          b: 'number'
+        }
+      )
+    ).toEqual({
+      a: 's k',
+      b: 0
+    });
+  });
 
-test('verifyPath', t=>{
-    t.false(verifyPath('a/b'));
-    t.true(verifyPath('/a:b/t/.api/k_-/tt'))
-    t.true(verifyPath('/a:b/t/.api/k_-/tt/'))
-})
+  it('verifyPath', () => {
+    expect(verifyPath('a/b')).toBe(false);
+    expect(verifyPath('/a:b/t/.api/k_-/tt')).toBe(true);
+    expect(verifyPath('/a:b/t/.api/k_-/tt/')).toBe(true);
+  });
 
-test('sandbox', t=>{
-    t.deepEqual(sandbox({
-        a: 1
-    }, 'a=2'), {a : 2});
-})
+  it('sandbox', () => {
+    expect(
+      sandbox(
+        {
+          a: 1
+        },
+        'a=2'
+      )
+    ).toEqual({ a: 2 });
+  });
 
-test('handleVarPath', t=>{
+  it('handleVarPath', () => {
     let result = [];
-    let pathname = '/a/:id'
+    let pathname = '/a/:id';
     handleVarPath(pathname, result);
 
-    t.deepEqual(result, [{
+    expect(result).toEqual([
+      {
         name: 'id',
         desc: ''
-    }])
-})
+      }
+    ]);
+  });
 
-test('handleVarPath2', t=>{
+  it('handleVarPath2', () => {
     let result = [];
-    let pathname = '/a/{id}'
+    let pathname = '/a/{id}';
     handleVarPath(pathname, result);
 
-    t.deepEqual(result, [{
+    expect(result).toEqual([
+      {
         name: 'id',
         desc: ''
-    }])
-})
+      }
+    ]);
+  });
 
-test('handleVarPath4', t=>{
+  it('handleVarPath4', () => {
     let result = [];
-    let pathname = '/a/id={id}/tt/:sub/kk'
+    let pathname = '/a/id={id}/tt/:sub/kk';
     handleVarPath(pathname, result);
 
-    t.deepEqual(result, [{
+    expect(result).toEqual([
+      {
         name: 'sub',
         desc: ''
-    }, {
+      },
+      {
         name: 'id',
         desc: ''
-    }])
-})
+      }
+    ]);
+  });
+});

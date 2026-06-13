@@ -1,180 +1,204 @@
-import test from 'ava';
+import { createRequire } from 'module';
+import { describe, it, expect } from 'vitest';
 
-const rewire = require("rewire");
+const require = createRequire(import.meta.url);
+const rewire = require('rewire');
 const lib = rewire('../common/lib.js');
 
-const plugin = rewire('../common/plugin.js')
+const plugin = rewire('../common/plugin.js');
 const initPlugins = plugin.initPlugins;
 
-
-test('initPlugins', t=>{
-  plugin.__set__("getPluginConfig", function(){
-    return {
-      server: true,
-      client: true
-    }
-  })
-  let configs = initPlugins(['a', 'b'], 'exts');
-  t.deepEqual(configs, [{
-    name: 'a',
-    enable: true,
-    server: true,
-    client: true
-  }, {
-    name: 'b',
-    enable: true,
-    server: true,
-    client: true
-  }])
-})
-
-test('initPlugins2', t=>{
-  plugin.__set__("getPluginConfig", function(){
-    return {
-      server: true,
-      client: false
-    }
-  })
-  let configs = initPlugins(['a', 'b'], 'exts');
-  t.deepEqual(configs, [{
-    name: 'a',
-    enable: true,
-    server: true,
-    client: false
-  }, {
-    name: 'b',
-    enable: true,
-    server: true,
-    client: false
-  }])
-})
-
-test('initPlugins3', t=>{
-  plugin.__set__("getPluginConfig", function(){
-    return {
-      server: false,
-      client: true
-    }
-  })
-  let configs = initPlugins(['a', {name: 'a'}], 'exts');
-  t.deepEqual(configs, [{
-    name: 'a',
-    enable: true,
-    server: false,
-    client: true
-  }])
-})
-
-test('initPlugins4', t=>{
-  plugin.__set__("getPluginConfig", function(){
-    return {
-      server: false,
-      client: true
-    }
-  })
-  let configs = initPlugins([{
-    name: 'a',
-    options: {
-      a:1,
-      t:{
-        c:3
+describe('lib', () => {
+  it('initPlugins', () => {
+    plugin.__set__('getPluginConfig', function () {
+      return {
+        server: true,
+        client: true
+      };
+    });
+    let configs = initPlugins(['a', 'b'], 'exts');
+    expect(configs).toEqual([
+      {
+        name: 'a',
+        enable: true,
+        server: true,
+        client: true
+      },
+      {
+        name: 'b',
+        enable: true,
+        server: true,
+        client: true
       }
-    }
-  }], 'exts');
-  t.deepEqual(configs, [{
-    name: 'a',
-    enable: true,
-    server: false,
-    client: true,
-    options: {
-      a:1,
-      t:{
-        c:3
+    ]);
+  });
+
+  it('initPlugins2', () => {
+    plugin.__set__('getPluginConfig', function () {
+      return {
+        server: true,
+        client: false
+      };
+    });
+    let configs = initPlugins(['a', 'b'], 'exts');
+    expect(configs).toEqual([
+      {
+        name: 'a',
+        enable: true,
+        server: true,
+        client: false
+      },
+      {
+        name: 'b',
+        enable: true,
+        server: true,
+        client: false
       }
-    }
-  }])
-})
+    ]);
+  });
 
-test('initPlugins5', t=>{
-  plugin.__set__("getPluginConfig", function(){
-    return {
-      server: false,
-      client: false
-    }
-  })
-  let configs = initPlugins(['a', 'b'], 'exts');
-  t.deepEqual(configs, [])
-})
+  it('initPlugins3', () => {
+    plugin.__set__('getPluginConfig', function () {
+      return {
+        server: false,
+        client: true
+      };
+    });
+    let configs = initPlugins(['a', { name: 'a' }], 'exts');
+    expect(configs).toEqual([
+      {
+        name: 'a',
+        enable: true,
+        server: false,
+        client: true
+      }
+    ]);
+  });
 
-test('testJsonEqual', t=>{
-  let json1 = {
-    a:"1",
-    b:2,
-    c:{
-      t:3,
-      x: [11,22]
-    }
-  };
+  it('initPlugins4', () => {
+    plugin.__set__('getPluginConfig', function () {
+      return {
+        server: false,
+        client: true
+      };
+    });
+    let configs = initPlugins(
+      [
+        {
+          name: 'a',
+          options: {
+            a: 1,
+            t: {
+              c: 3
+            }
+          }
+        }
+      ],
+      'exts'
+    );
+    expect(configs).toEqual([
+      {
+        name: 'a',
+        enable: true,
+        server: false,
+        client: true,
+        options: {
+          a: 1,
+          t: {
+            c: 3
+          }
+        }
+      }
+    ]);
+  });
 
-  let json2 = {    
-    c:{
-      x: [11,22],
-      t:3
-    },
-    b:2,
-    a:"1"
-  }
-  t.true(lib.jsonEqual(json1, json1));
-})
+  it('initPlugins5', () => {
+    plugin.__set__('getPluginConfig', function () {
+      return {
+        server: false,
+        client: false
+      };
+    });
+    let configs = initPlugins(['a', 'b'], 'exts');
+    expect(configs).toEqual([]);
+  });
 
-test('testJsonEqualBase', t=>{
-  t.true(lib.jsonEqual(1,1));
-})
+  it('testJsonEqual', () => {
+    let json1 = {
+      a: '1',
+      b: 2,
+      c: {
+        t: 3,
+        x: [11, 22]
+      }
+    };
 
-test('testJsonEqualBaseString', t=>{
-  t.true(lib.jsonEqual('2', '2'));
-})
+    let json2 = {
+      c: {
+        x: [11, 22],
+        t: 3
+      },
+      b: 2,
+      a: '1'
+    };
+    expect(lib.jsonEqual(json1, json1)).toBe(true);
+  });
 
+  it('testJsonEqualBase', () => {
+    expect(lib.jsonEqual(1, 1)).toBe(true);
+  });
 
-test('isDeepMatch shallow', t=>{
-  t.true(lib.isDeepMatch({a:'aaaaa', b:2}, {a:'aaaaa'}))
-})
+  it('testJsonEqualBaseString', () => {
+    expect(lib.jsonEqual('2', '2')).toBe(true);
+  });
 
-test('isDeepMatch nested', t=>{
-  t.true(lib.isDeepMatch({a:1, b:2, c: {t:'ttt'}}, {c: {t:'ttt'}}))
-})
+  it('isDeepMatch shallow', () => {
+    expect(lib.isDeepMatch({ a: 'aaaaa', b: 2 }, { a: 'aaaaa' })).toBe(true);
+  });
 
-test('isDeepMatch empty object', t=>{
-  t.true(lib.isDeepMatch({}, undefined))
-})
+  it('isDeepMatch nested', () => {
+    expect(lib.isDeepMatch({ a: 1, b: 2, c: { t: 'ttt' } }, { c: { t: 'ttt' } })).toBe(true);
+  });
 
-test('isDeepMatch undefined target', t=>{
-  t.true(lib.isDeepMatch(undefined, {}))
-})
+  it('isDeepMatch empty object', () => {
+    expect(lib.isDeepMatch({}, undefined)).toBe(true);
+  });
 
-test('isDeepMatch undefined source', t=>{
-  t.false(lib.isDeepMatch(undefined, {a:1}))
-})
+  it('isDeepMatch undefined target', () => {
+    expect(lib.isDeepMatch(undefined, {})).toBe(true);
+  });
 
-test('isDeepMatch partial fields', t=>{
-  t.true(lib.isDeepMatch({ t: 1,
-    b: '2',
-    ip: '127.0.0.1',
-    interface_id: 1857,
-    ip_enable: true,
-    params: { a: 'x', b: 'y' },
-    res_body: '111',
-    code: 1 }, {t:'1'}))
-})
+  it('isDeepMatch undefined source', () => {
+    expect(lib.isDeepMatch(undefined, { a: 1 })).toBe(false);
+  });
 
-test('isDeepMatch array', t=>{
-    t.true(lib.isDeepMatch({ t:[{a: 1}]}, { t:[{a: 1}]}))
-  })
+  it('isDeepMatch partial fields', () => {
+    expect(
+      lib.isDeepMatch(
+        {
+          t: 1,
+          b: '2',
+          ip: '127.0.0.1',
+          interface_id: 1857,
+          ip_enable: true,
+          params: { a: 'x', b: 'y' },
+          res_body: '111',
+          code: 1
+        },
+        { t: '1' }
+      )
+    ).toBe(true);
+  });
 
-  test('isDeepMatch array mismatch', t=>{
-    t.false(lib.isDeepMatch({ t:[{a: 1, b: 12}]}, { t:[{a: 1}]}))
-  })
+  it('isDeepMatch array', () => {
+    expect(lib.isDeepMatch({ t: [{ a: 1 }] }, { t: [{ a: 1 }] })).toBe(true);
+  });
 
-  test('isDeepMatch array root', t=>{
-    t.true(lib.isDeepMatch([{a: 1}], [{a: 1}]))
-  })
+  it('isDeepMatch array mismatch', () => {
+    expect(lib.isDeepMatch({ t: [{ a: 1, b: 12 }] }, { t: [{ a: 1 }] })).toBe(false);
+  });
+
+  it('isDeepMatch array root', () => {
+    expect(lib.isDeepMatch([{ a: 1 }], [{ a: 1 }])).toBe(true);
+  });
+});

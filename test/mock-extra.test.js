@@ -1,107 +1,113 @@
-import test from 'ava';
+import { createRequire } from 'module';
+import { describe, it, expect } from 'vitest';
+
+const require = createRequire(import.meta.url);
 const mockExtra = require('../common/mock-extra.js');
 
-
-test('mock-extra', t=>{
-  let data = '@string ${body.a}';
-  t.is(mockExtra(data), '@string ${body.a}');
-  let data2 = {
-    a:'@string',
-    b:{
-      t:'${body.a}'
-    }
-  }
-  t.deepEqual(mockExtra(data2,{
-    body: {
-      a: 3
-    }
-  }), {
-    a:'@string',
-    b:{
-      t:3
-    }
-  }, 'message');
-
-  //test object
-  let data3 = {
-    a:'@string',
-    b:{
-      t:'${body}'
-    }
-  }
-  t.deepEqual(mockExtra(data3,{
-    body: {
-      a: 3,
-      t: 5
-    }
-  }), {
-    a:'@string',
-    b:{
-      t:{
-        a: 3,
-        t: 5
+describe('mock-extra', () => {
+  it('mock-extra', () => {
+    let data = '@string ${body.a}';
+    expect(mockExtra(data)).toBe('@string ${body.a}');
+    let data2 = {
+      a: '@string',
+      b: {
+        t: '${body.a}'
       }
-    }
-  }, 'message');
+    };
+    expect(
+      mockExtra(data2, {
+        body: {
+          a: 3
+        }
+      })
+    ).toEqual({
+      a: '@string',
+      b: {
+        t: 3
+      }
+    });
 
-  //test array
-  let data4 = {
-    a:'@string',
-    b:{
-      t:'${query.arr}'
-    }
-  }
+    let data3 = {
+      a: '@string',
+      b: {
+        t: '${body}'
+      }
+    };
+    expect(
+      mockExtra(data3, {
+        body: {
+          a: 3,
+          t: 5
+        }
+      })
+    ).toEqual({
+      a: '@string',
+      b: {
+        t: {
+          a: 3,
+          t: 5
+        }
+      }
+    });
 
-  t.deepEqual(mockExtra(data4, {query: {
-    arr: [1,2,3]
-  }}), {
-    a: '@string',
-    b:{
-      t: [1,2,3]
-    }
-  
-  }, 'message');
+    let data4 = {
+      a: '@string',
+      b: {
+        t: '${query.arr}'
+      }
+    };
 
-  //test var
-  let data5 = {
-    a:'@string',
-    b:{
-      t:'${ttt.arr}'
-    }
-  }
+    expect(
+      mockExtra(data4, {
+        query: {
+          arr: [1, 2, 3]
+        }
+      })
+    ).toEqual({
+      a: '@string',
+      b: {
+        t: [1, 2, 3]
+      }
+    });
 
-  t.deepEqual(mockExtra(data5, {ttt: {
-    arr: [1,2,3]
-  }}), {
-    a: '@string',
-    b:{
-      t: [1,2,3]
-    }
-  
-  }, 'message');
+    let data5 = {
+      a: '@string',
+      b: {
+        t: '${ttt.arr}'
+      }
+    };
 
-//test var
-let data6 = {
-  a:'@string',
-  b:{
-    "ttt|regexp":'a|b'
-  }
-}
+    expect(
+      mockExtra(data5, {
+        ttt: {
+          arr: [1, 2, 3]
+        }
+      })
+    ).toEqual({
+      a: '@string',
+      b: {
+        t: [1, 2, 3]
+      }
+    });
 
-//test regexp
-t.deepEqual(mockExtra(data6, {ttt: {
-  arr: [1,2,3]
-}}), {
-  a: '@string',
-  b:{
-    ttt: /a|b/
-  }
+    let data6 = {
+      a: '@string',
+      b: {
+        'ttt|regexp': 'a|b'
+      }
+    };
 
-}, 'message');
-
-
-
-
-
-})
-
+    expect(
+      mockExtra(data6, {
+        ttt: {
+          arr: [1, 2, 3]
+        }
+      })
+    ).toEqual({
+      a: '@string',
+      b: {
+        ttt: /a|b/
+      }
+    });
+  });
+});

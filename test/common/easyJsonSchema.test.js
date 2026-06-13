@@ -1,61 +1,63 @@
-import test from 'ava';
-import easyJsonSchema from '../../common/easyJsonSchema';
+import { describe, it, expect } from 'vitest';
+import easyJsonSchema from '../../common/easyJsonSchema.js';
 
-test('primitive field', t => {
-  const schema = easyJsonSchema({ name: 'string', count: 'number' });
-  t.deepEqual(schema, {
-    type: 'object',
-    required: [],
-    properties: {
-      name: { type: 'string' },
-      count: { type: 'number' }
-    }
+describe('easyJsonSchema', () => {
+  it('primitive field', () => {
+    const schema = easyJsonSchema({ name: 'string', count: 'number' });
+    expect(schema).toEqual({
+      type: 'object',
+      required: [],
+      properties: {
+        name: { type: 'string' },
+        count: { type: 'number' }
+      }
+    });
   });
-});
 
-test('required field with asterisk prefix', t => {
-  const schema = easyJsonSchema({ '*id': 'number', token: 'string' });
-  t.deepEqual(schema.required, ['id']);
-  t.deepEqual(schema.properties.id, { type: 'number' });
-  t.deepEqual(schema.properties.token, { type: 'string' });
-});
+  it('required field with asterisk prefix', () => {
+    const schema = easyJsonSchema({ '*id': 'number', token: 'string' });
+    expect(schema.required).toEqual(['id']);
+    expect(schema.properties.id).toEqual({ type: 'number' });
+    expect(schema.properties.token).toEqual({ type: 'string' });
+  });
 
-test('array template', t => {
-  const schema = easyJsonSchema({
-    req_query: [{ name: 'string', required: 'string' }]
+  it('array template', () => {
+    const schema = easyJsonSchema({
+      req_query: [{ name: 'string', required: 'string' }]
+    });
+    expect(schema.properties.req_query.type).toBe('array');
+    expect(schema.properties.req_query.items).toEqual({
+      type: 'object',
+      required: [],
+      properties: {
+        name: { type: 'string' },
+        required: { type: 'string' }
+      }
+    });
   });
-  t.is(schema.properties.req_query.type, 'array');
-  t.deepEqual(schema.properties.req_query.items, {
-    type: 'object',
-    required: [],
-    properties: {
-      name: { type: 'string' },
-      required: { type: 'string' }
-    }
-  });
-});
 
-test('json schema fragment', t => {
-  const schema = easyJsonSchema({
-    '*path': { type: 'string', minLength: 1 },
-    mode: { type: 'string', default: 'html' }
+  it('json schema fragment', () => {
+    const schema = easyJsonSchema({
+      '*path': { type: 'string', minLength: 1 },
+      mode: { type: 'string', default: 'html' }
+    });
+    expect(schema.required).toEqual(['path']);
+    expect(schema.properties.path).toEqual({ type: 'string', minLength: 1 });
+    expect(schema.properties.mode).toEqual({ type: 'string', default: 'html' });
   });
-  t.deepEqual(schema.required, ['path']);
-  t.deepEqual(schema.properties.path, { type: 'string', minLength: 1 });
-  t.deepEqual(schema.properties.mode, { type: 'string', default: 'html' });
-});
 
-test('validateParams integration shape', t => {
-  const schema = easyJsonSchema({
-    '*type': 'string',
-    merge: { type: 'string', default: 'normal' }
-  });
-  t.deepEqual(schema, {
-    type: 'object',
-    required: ['type'],
-    properties: {
-      type: { type: 'string' },
+  it('validateParams integration shape', () => {
+    const schema = easyJsonSchema({
+      '*type': 'string',
       merge: { type: 'string', default: 'normal' }
-    }
+    });
+    expect(schema).toEqual({
+      type: 'object',
+      required: ['type'],
+      properties: {
+        type: { type: 'string' },
+        merge: { type: 'string', default: 'normal' }
+      }
+    });
   });
 });
