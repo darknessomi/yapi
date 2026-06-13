@@ -93,7 +93,7 @@ class interfaceColController extends baseController {
           chunk.copy(data, pos);
           pos += chunk.length;
         }
-        fs.writeFileSync(path.join(yapi.WEBROOT_RUNTIME, 'test.text'), data, function(err) {
+        fs.writeFileSync(path.join(yapi.WEBROOT_RUNTIME, 'test.text'), data, function() {
           return (ctx.body = yapi.commons.resReturn(null, 402, '写入失败'));
         });
       });
@@ -113,9 +113,10 @@ class interfaceColController extends baseController {
    */
   async testFilesUpload(ctx) {
     try {
-      let file = ctx.request.body.files.file;
+      const raw = ctx.request.files && ctx.request.files.file;
+      const file = Array.isArray(raw) ? raw[0] : raw;
       let newPath = path.join(yapi.WEBROOT_RUNTIME, 'test.text');
-      fs.renameSync(file.path, newPath);
+      fs.renameSync(file.filepath, newPath);
       ctx.body = yapi.commons.resReturn({ res: '上传成功' });
     } catch (e) {
       ctx.body = yapi.commons.resReturn(null, 402, e.message);

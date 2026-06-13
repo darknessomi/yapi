@@ -69,27 +69,6 @@ const getNowMidnightDate = (time) => {
 }
 
 /**
- * 格式化 年、月、日、时、分、秒
- * @param val {Object or String or Number} 日期对象 或是可new Date的对象或时间戳
- * @return {String} 2017-01-20 20:00:00
- */
-const formatDate = val => {
-    let date = val;
-    if (typeof val !== 'object') {
-        date = new Date(val);
-    }
-    return `${[
-        date.getFullYear(),
-        convert2Decimal(date.getMonth() + 1),
-        convert2Decimal(date.getDate())
-    ].join('-')}  ${[
-        convert2Decimal(date.getHours()),
-        convert2Decimal(date.getMinutes()),
-        convert2Decimal(date.getSeconds())
-    ].join(':')}`;
-}
-
-/**
  * 格式化年、月、日
  * @param val {Object or String or Number} 日期对象 或是可new Date的对象或时间戳
  * @return {String} 2017-01-20

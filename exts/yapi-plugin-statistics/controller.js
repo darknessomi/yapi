@@ -9,7 +9,6 @@ const interfaceModel = require('models/interface.js');
 const interfaceCaseModel = require('models/interfaceCase.js');
 
 const yapi = require('yapi.js');
-const config = require('./index.js');
 const commons = require('./util.js');
 const os = require('os');
 let cpu = require('cpu-load');
@@ -115,7 +114,7 @@ class statisMockController extends baseController {
   }
 
   checkEmail() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let result = {};
       yapi.mail.verify(error => {
         if (error) {
@@ -165,7 +164,7 @@ class statisMockController extends baseController {
   }
 
   cupLoad() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       cpu(1000, function(load) {
         resolve(load);
       });

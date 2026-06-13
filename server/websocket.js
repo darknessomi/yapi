@@ -1,8 +1,8 @@
-const koaRouter = require('koa-router');
+const Router = require('@koa/router');
 const interfaceController = require('./controllers/interface.js');
 const yapi = require('./yapi.js');
 
-const router = koaRouter();
+const router = new Router();
 const { createAction } = require("./utils/commons.js")
 
 let pluginsRouterPath = [];
@@ -30,7 +30,7 @@ function websocket(app) {
 
   app.ws.use(router.routes())
   app.ws.use(router.allowedMethods());
-  app.ws.use(function (ctx, next) {
+  app.ws.use(function (ctx) {
     return ctx.websocket.send(JSON.stringify({
       errcode: 404,
       errmsg: 'No Fount.'

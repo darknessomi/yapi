@@ -110,8 +110,7 @@ function mockValidator(interfaceData, ctx) {
       if (curForm && typeof curForm === 'object' && curForm.required === '1') {
         if (
           ctx.request.body[curForm.name] ||
-          (ctx.request.body.fields && ctx.request.body.fields[curForm.name]) ||
-          (ctx.request.body.files && ctx.request.body.files[curForm.name])
+          (ctx.request.files && ctx.request.files[curForm.name])
         ) {
           continue;
         }
@@ -290,14 +289,6 @@ module.exports = async (ctx, next) => {
         } else {
           // console.log('header', ctx.request.header['content-type'].indexOf('multipart/form-data'))
           // 处理 format-data
-
-          if (
-            _.isString(ctx.request.header['content-type']) &&
-            ctx.request.header['content-type'].indexOf('multipart/form-data') > -1
-          ) {
-            ctx.request.body = ctx.request.body.fields;
-          }
-          // console.log('body', ctx.request.body)
 
           res = mockExtra(yapi.commons.json_parse(interfaceData.res_body), {
             query: ctx.request.query,

@@ -6,12 +6,20 @@ module.exports = {
         "node": true
     },
     extends: ["eslint:recommended", "plugin:react/recommended"],
-    parser: "babel-eslint",
+    parser: "@babel/eslint-parser",
     parserOptions: {
-        "ecmaFeatures": {
+        requireConfigFile: false,
+        babelOptions: {
+            presets: ["@babel/preset-react"],
+            plugins: [
+                ["@babel/plugin-proposal-decorators", { legacy: true }],
+                ["@babel/plugin-transform-class-properties", { loose: true }]
+            ]
+        },
+        ecmaFeatures: {
             "jsx": true
         },
-        "sourceType": "module"
+        sourceType: "module"
     },
     plugins: [
         "react",

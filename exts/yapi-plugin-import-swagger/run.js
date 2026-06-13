@@ -157,7 +157,7 @@ const compareVersions = require('compare-versions');
     if(data.tags && Array.isArray(data.tags)){
       api.tag = data.tags;
       for(let i=0; i< data.tags.length; i++){
-        if(/v[0-9\.]+/.test(data.tags[i])){
+        if(/v[0-9.]+/.test(data.tags[i])){
           continue;
         }
 

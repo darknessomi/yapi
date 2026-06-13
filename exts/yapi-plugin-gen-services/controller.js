@@ -110,7 +110,7 @@ class exportController extends baseController {
                 cate.proName = curProject.name;
                 cate.proDescription = curProject.desc;
                 cate.list = cate.list.map(function(api) {
-                  api.path = api.query_path.path = (basepath + '/' + api.path).replace(/[\/]{2,}/g, '/');
+                  api.path = api.query_path.path = (basepath + '/' + api.path).replace(/\/{2,}/g, '/');
                   return api;
                 });
               }

@@ -13,7 +13,7 @@
 2. 优化 Dockerfile 构建缓存，加快 rebuild 速度
 3. 修复 gzip 静态资源 Content-Type 错误导致样式丢失的问题
 4. 补充 extend 生产依赖
-5. 升级运行环境至 Node 18 / MongoDB 6
+5. 升级运行环境至 Node 20 / MongoDB 6
 
 ## YApi 可视化接口管理平台
 

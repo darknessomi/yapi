@@ -129,7 +129,7 @@ class projectController extends baseController {
     if (basepath[basepath.length - 1] === '/') {
       basepath = basepath.substr(0, basepath.length - 1);
     }
-    if (!/^\/[a-zA-Z0-9\-\/\._]+$/.test(basepath)) {
+    if (!/^\/[a-zA-Z0-9\-/._]+$/.test(basepath)) {
       return false;
     }
     return basepath;
@@ -139,7 +139,7 @@ class projectController extends baseController {
     if (!domain) {
       return false;
     }
-    if (/^[a-zA-Z0-9\-_\.]+?\.[a-zA-Z0-9\-_\.]*?[a-zA-Z]{2,6}$/.test(domain)) {
+    if (/^[a-zA-Z0-9\-_.]+?\.[a-zA-Z0-9\-_.]*?[a-zA-Z]{2,6}$/.test(domain)) {
       return true;
     }
     return false;

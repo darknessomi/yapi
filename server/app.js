@@ -16,7 +16,7 @@ require('./utils/notice')
 const Koa = require('koa');
 const koaStatic = require('koa-static');
 // const bodyParser = require('koa-bodyparser');
-const koaBody = require('koa-body');
+const { koaBody } = require('koa-body');
 const router = require('./router.js');
 
 global.storageCreator = storageCreator;
@@ -35,7 +35,7 @@ app.use(router.allowedMethods());
 websocket(app);
 
 app.use(async (ctx, next) => {
-  if (/^\/(?!api)[a-zA-Z0-9\/\-_]*$/.test(ctx.path)) {
+  if (/^\/(?!api)[a-zA-Z0-9/\-_]*$/.test(ctx.path)) {
     ctx.path = '/';
     await next();
   } else {

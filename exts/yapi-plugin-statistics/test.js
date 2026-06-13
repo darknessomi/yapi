@@ -1,8 +1,6 @@
-const fs = require('fs-extra');
 const yapi = require('../../server/yapi.js');
 const commons = require('../../server/utils/commons');
 const dbModule = require('../../server/utils/db.js');
-const userModel = require('../../server/models/user.js');
 const mongoose = require('mongoose');
 
 yapi.commons = commons;
@@ -24,7 +22,7 @@ const formatYMD = (val, joinStr = '-') => {
 
 function run() {
   let time = yapi.commons.time() - 10000000;
-  let data = i => {
+  let data = () => {
     time = time - yapi.commons.rand(10000, 1000000);
     return {
       interface_id: 94,

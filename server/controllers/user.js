@@ -137,7 +137,7 @@ class userController extends baseController {
       const { email, password } = ctx.request.body;
       // const username = email.split(/\@/g)[0];
       const { info: ldapInfo } = await ldap.ldapQuery(email, password);
-      const emailPrefix = email.split(/\@/g)[0];
+      const emailPrefix = email.split(/@/g)[0];
       const emailPostfix = yapi.WEBCONFIG.ldapLogin.emailPostfix;
 
       const emailParams =

@@ -127,7 +127,7 @@ export default class Project extends Component {
       } else {
         value = {
           name: item.name,
-          path: item.path.replace(/\:id/gi, match.params.id)
+          path: item.path.replace(/:id/gi, match.params.id)
         };
       }
       subnavData.push(value);

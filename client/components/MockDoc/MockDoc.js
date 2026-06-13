@@ -36,24 +36,24 @@ class MockDoc extends Component {
             var mes = [];
             item.mes.type
               ? mes.push(
-                  <span key={i} className="keymes">
-                    {' '}
-                    / /类型：{item.mes.type}
-                  </span>
+                <span key={i} className="keymes">
+                  {' '}
+                  / /类型：{item.mes.type}
+                </span>
                 )
               : '';
             item.mes.required
               ? mes.push(
-                  <span key={i + 1} className="keymes">
-                    必有字段
-                  </span>
+                <span key={i + 1} className="keymes">
+                  必有字段
+                </span>
                 )
               : '';
             item.mes.desc
               ? mes.push(
-                  <span key={i + 2} className="keymes">
-                    备注：{item.mes.desc}
-                  </span>
+                <span key={i + 2} className="keymes">
+                  备注：{item.mes.desc}
+                </span>
                 )
               : '';
           }
@@ -148,7 +148,7 @@ function mockToArr(mock, html, space, key) {
     }
   }
   for (var i in mock) {
-    if (!mock.hasOwnProperty(i)) {
+    if (!Object.prototype.hasOwnProperty.call(mock, i)) {
       continue;
     }
     var index = i;

@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 ENV TZ="Asia/Shanghai"
 # 使用阿里云镜像
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories

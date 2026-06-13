@@ -1124,7 +1124,7 @@ class interfaceController extends baseController {
       params.forEach(item => {
         if (item.id) {
           this.Model.upIndex(item.id, item.index).then(
-            res => {},
+            () => {},
             err => {
               yapi.commons.log(err.message, 'error');
             }
@@ -1157,7 +1157,7 @@ class interfaceController extends baseController {
       params.forEach(item => {
         if (item.id) {
           this.catModel.upCatIndex(item.id, item.index).then(
-            res => {},
+            () => {},
             err => {
               yapi.commons.log(err.message, 'error');
             }

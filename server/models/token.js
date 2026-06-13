@@ -1,4 +1,3 @@
-const yapi = require('../yapi.js');
 const baseModel = require('./base.js');
 
 class tokenModel extends baseModel {

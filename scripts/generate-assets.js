@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const zlib = require('zlib');
 
 const prdDir = path.join(__dirname, '../static/prd');
 const manifestPath = path.join(prdDir, '.vite/manifest.json');

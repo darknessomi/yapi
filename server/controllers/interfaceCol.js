@@ -4,7 +4,6 @@ const interfaceModel = require('../models/interface.js');
 const projectModel = require('../models/project.js');
 const baseController = require('./base.js');
 const yapi = require('../yapi.js');
-const _ = require('underscore');
 
 class interfaceColController extends baseController {
   constructor(ctx) {
@@ -720,7 +719,7 @@ class interfaceColController extends baseController {
       params.forEach(item => {
         if (item.id) {
           this.caseModel.upCaseIndex(item.id, item.index).then(
-            res => {},
+            () => {},
             err => {
               yapi.commons.log(err.message, 'error');
             }
@@ -754,7 +753,7 @@ class interfaceColController extends baseController {
       params.forEach(item => {
         if (item.id) {
           this.colModel.upColIndex(item.id, item.index).then(
-            res => {},
+            () => {},
             err => {
               yapi.commons.log(err.message, 'error');
             }

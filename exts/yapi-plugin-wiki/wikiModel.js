@@ -1,4 +1,3 @@
-const yapi = require('yapi.js');
 const baseModel = require('models/base.js');
 
 class statisMockModel extends baseModel {

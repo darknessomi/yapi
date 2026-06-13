@@ -8,7 +8,6 @@ const interfaceColModel = require('../models/interfaceCol.js');
 const interfaceCaseModel = require('../models/interfaceCase.js');
 const interfaceModel = require('../models/interface.js');
 const userModel = require('../models/user.js');
-const followModel = require('../models/follow.js');
 const json5 = require('json5');
 const _ = require('underscore');
 const Ajv = require('ajv');
@@ -269,7 +268,7 @@ exports.verifyPath = path => {
   // } else {
   //   return false;
   // }
-  return /^\/[a-zA-Z0-9\-\/_:!\.\{\}\=]*$/.test(path);
+  return /^\/[a-zA-Z0-9\-/_:!{}=.]*$/.test(path);
 };
 
 /**
@@ -282,18 +281,14 @@ exports.verifyPath = path => {
  * a = {a: 2}
  */
 exports.sandbox = (sandbox, script) => {
-  try {
-    const vm = require('vm');
-    sandbox = sandbox || {};	
-    script = new vm.Script(script);	
-    const context = new vm.createContext(sandbox);	
-    script.runInContext(context, {	
-      timeout: 3000	
-    });	      
-    return sandbox
-  } catch (err) {
-    throw err
-  }
+  const vm = require('vm');
+  sandbox = sandbox || {};	
+  script = new vm.Script(script);	
+  const context = new vm.createContext(sandbox);	
+  script.runInContext(context, {	
+    timeout: 3000	
+  });	      
+  return sandbox
 };
 
 function trim(str) {

@@ -1,2 +1,4 @@
 node_modules/*
 common/json-schema-mockjs.js
+common/tui-editor/dist/**
+**/*.min.js
