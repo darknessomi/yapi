@@ -69,8 +69,8 @@ Footer.defaultProps = {
       iconType: 'github',
       linkList: [
         {
-          itemTitle: 'YApi Pro 源码仓库',
-          itemLink: 'https://github.com/yapi-pro/yapi'
+          itemTitle: 'YApi 源码仓库',
+          itemLink: 'https://github.com/darknessomi/yapi'
         }
       ]
     },
@@ -79,8 +79,12 @@ Footer.defaultProps = {
       iconType: 'team',
       linkList: [
         {
-          itemTitle: 'YApi-Pro',
-          itemLink: 'https://github.com/yapi-pro'
+          itemTitle: '社区 fork',
+          itemLink: 'https://github.com/darknessomi/yapi'
+        },
+        {
+          itemTitle: '原 YApi Pro',
+          itemLink: 'https://github.com/yapi-pro/yapi'
         },
         {
           itemTitle: 'YMFE',
@@ -94,11 +98,11 @@ Footer.defaultProps = {
       linkList: [
         {
           itemTitle: 'Github Issues',
-          itemLink: 'https://github.com/yapi-pro/yapi/issues'
+          itemLink: 'https://github.com/darknessomi/yapi/issues'
         },
         {
           itemTitle: 'Github Pull Requests',
-          itemLink: 'https://github.com/yapi-pro/yapi/pulls'
+          itemLink: 'https://github.com/darknessomi/yapi/pulls'
         }
       ]
     },
@@ -107,7 +111,7 @@ Footer.defaultProps = {
       linkList: [
         {
           itemTitle: `版本: ${version} `,
-          itemLink: 'https://github.com/yapi-pro/yapi/blob/master/CHANGELOG.md'
+          itemLink: 'https://github.com/darknessomi/yapi/blob/master/CHANGELOG.md'
         },
         {
           itemTitle: '使用文档',

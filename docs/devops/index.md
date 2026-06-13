@@ -1,7 +1,13 @@
 # 内网部署
-使用我们提供的 yapi-pro-cli 工具，部署 YApi 平台是非常容易的。建议部署成 http 站点，因 chrome 浏览器安全限制，部署成 https 会导致测试功能在请求 http 站点时文件上传功能异常。
+
+本 fork 推荐使用 [Docker Compose](https://github.com/darknessomi/yapi#部署推荐docker-compose) 部署，详见仓库 [README](https://github.com/darknessomi/yapi)。
+
+> 说明：原 YApi Pro 的 `yapi-pro-cli` 可视化部署、官方 Docker 镜像（yapipro/yapi）等**与本 fork 无关，已不再适用**。本 fork 通过本仓库源码 + Docker Compose 或源码方式部署和升级。
+
+建议部署成 http 站点，因 Chrome 浏览器安全限制，部署成 https 会导致测试功能在请求 http 站点时文件上传功能异常。
 
 如果您是将服务器代理到 nginx 服务器，请配置 nginx 支持 websocket。
+
 ```
 在location /添加
 proxy_http_version 1.1;
@@ -10,73 +16,69 @@ proxy_set_header Connection "upgrade";
 ```
 
 ## 环境要求
-* nodejs（7.6+)
-* mongodb（2.6+）
 
+* Docker + Docker Compose（推荐）
+* 或 Node.js 20+、MongoDB 6+、git（源码部署）
 
 ## 安装
-### 方式一. 可视化部署[推荐]
-执行 yapi server 启动可视化部署程序，输入相应的配置和点击开始部署，就能完成整个网站的部署。部署完成之后，可按照提示信息，执行 node/{网站路径/server/app.js} 启动服务器。在浏览器打开指定url, 点击登录输入您刚才设置的管理员邮箱，默认密码(yapi.pro) 登录系统（默认密码可在个人中心修改）。
-```bash
-npm install -g yapi-pro-cli --registry https://registry.npm.taobao.org
-yapi server
-``` 
-### 方式二. 命令行部署
 
-如果 github 压缩文件无法下载，或需要部署到一些特殊的服务器，可尝试此方法
+### 方式一. Docker Compose 部署（推荐）
 
 ```bash
-mkdir yapi
+git clone https://github.com/darknessomi/yapi.git
 cd yapi
-git clone https://github.com/yapi-pro/yapi.git vendors //或者下载 zip 包解压到 vendors 目录（clone 整个仓库大概 140+ M，可以通过 `git clone --depth=1 https://github.com/yapi-pro/yapi.git vendors` 命令减少，大概 10+ M）
-cp vendors/config_example.json ./config.json //复制完成后请修改相关配置
-cd vendors
-npm install --production --registry https://registry.npm.taobao.org
-npm run install-server //安装程序会初始化数据库索引和管理员账号，管理员账号名可在 config.json 配置
-node server/app.js //启动服务器后，请访问 127.0.0.1:{config.json配置的端口}，初次运行会有个编译的过程，请耐心等候
+docker compose up -d --build
+# 访问 http://127.0.0.1:3000
 ```
 
-安装后的目录结构如下：
+首次启动会自动初始化数据库并创建管理员账号。默认管理员：邮箱 `admin@admin.com`，密码 `yapi.pro`（登录后可在个人中心修改）。
 
+详细说明见仓库 [README — 部署](https://github.com/darknessomi/yapi#部署推荐docker-compose)。
+
+### 方式二. 源码部署
+
+```bash
+git clone https://github.com/darknessomi/yapi.git
+cd yapi
+npm install
+cp config_example.json config.json   # 复制后修改 MongoDB 等配置
+node server/install.js                 # 仅首次初始化
+node server/app.js
 ```
-|-- config.json
-|-- init.lock
-|-- log
-`-- vendors
-    |-- CHANGELOG.md
-    |-- LICENSE
-    |-- README.md
-    |-- client
-    |-- common
-    |-- config_example.json
-    |-- doc
-    |-- exts
-    |-- nodemon.json
-    |-- npm-debug.log
-    |-- package.json
-    |-- plugin.json
-    |-- server
-    |-- static
-    |-- test
-    |-- webpack.alias.js
-    |-- yapi-base-flow.jpg
-    |-- ydocfile.js
-    `-- ykit.config.js
+
+生产环境需先构建前端：
+
+```bash
+npm run build-client   # 产物输出到 static/prd
+node server/app.js
 ```
 
 ## 服务器管理
 
-推荐使用 pm2 管理 node 服务器启动，停止，具体使用方法可参考下面的教程：
+推荐使用 pm2 管理 node 服务器启动、停止，具体使用方法可参考下面的教程：
+
 * <a href="http://pm2.keymetrics.io/docs/usage/quick-start/" target="_blank">官网文档</a>
-* <a href="http://imweb.io/topic/57c8cbb27f226f687b365636" target="_blank">PM2实用入门指南</a> 
+* <a href="http://imweb.io/topic/57c8cbb27f226f687b365636" target="_blank">PM2实用入门指南</a>
 
 ## 升级
-升级项目版本是非常容易的，并且不会影响已有的项目数据，只会同步 vendors 目录下的源码文件。
 
-    cd  {项目目录}
-    yapi ls //查看版本号列表
-    yapi update //升级到最新版本
-    yapi update -v v1.1.0 //升级到指定版本
+**Docker Compose：**
+
+```bash
+git pull
+docker compose up -d --build yapi
+```
+
+**源码 / pm2：**
+
+```bash
+git pull
+npm install
+npm run build-client   # 若前端有变更
+pm2 restart yapi
+```
+
+从旧版 YApi / YApi Pro 迁移说明见仓库 [README — 从旧版升级到本 fork](https://github.com/darknessomi/yapi#从旧版升级到本-fork)。
 
 ## 配置邮箱
 打开项目目录 config.json 文件，新增 mail 配置， 替换默认的邮箱配置

@@ -6,12 +6,12 @@ module.exports = {
     "instructionsInfoPath": "", //使用说明 内容路径 (需要配合JS-Component注释的@instructions使用)
     "instructionsUrlPath": "", //使用说明demo路径 (需要配合JS-Component注释的@instructions使用)
     "common": { // 通用默认配置，包括主页配置等
-        "title": "YApi 接口管理平台", //page title
-        "footer": "&copy; 2018 <a href=\"https://ymfe.org\">YMFE</a> Team. Build by <a href=\"http://ued.qunar.com/ydoc/\">ydoc</a>&nbsp;", // 通用尾
+        "title": "YApi 接口管理平台（社区 fork）",
+        "footer": "&copy; 2018 <a href=\"https://ymfe.org\">YMFE</a> Team. 社区维护 fork: <a href=\"https://github.com/darknessomi/yapi\">darknessomi/yapi</a>. Build by <a href=\"http://ued.qunar.com/ydoc/\">ydoc</a>&nbsp;",
         "home": '<img src="./images/logo_header@2x.png" /> &nbsp;YAPI', 
         "homeUrl": "./index.html", 
         "keywords": "api管理,接口管理,接口文档,api文档",
-        "description": "YApi 是高效、易用、功能强大的 api 管理平台，旨在为开发、产品、测试人员提供更优雅的接口管理服务。可以帮助开发者轻松创建、发布、维护 API，YApi 还为用户提供了优秀的交互体验，开发人员只需利用平台提供的接口数据写入工具以及简单的点击操作就可以实现接口的管理。"
+        "description": "YApi 可视化接口管理平台社区维护 fork：修复依赖兼容性，升级至 Node 20 / MongoDB 6，提供开箱即用的 Docker Compose 部署方案。"
     },
     "options": {
         "foldcode": false,
@@ -30,7 +30,7 @@ module.exports = {
                     "href": "http://yapi.demo.qunar.com"
                 },{
                     "name": "Github",
-                    "href": "https://github.com/yapi-pro/yapi"
+                    "href": "https://github.com/darknessomi/yapi"
                 }],
                 "intro": [{ // 首页的正文部分，数组项依次渲染，可重复使用
                     "title": "为 API 开发者设计的管理平台", // 介绍板块标题

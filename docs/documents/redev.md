@@ -1,17 +1,17 @@
-## 安装YApi
+## 安装 YApi
 
-1.创建工程目录
+1. 克隆仓库
 
 ```bash
-mkdir yapi && cd yapi
-git clone https://github.com/yapi-pro/yapi.git vendors --depth=1 # 或者下载 zip 包解压到 vendors 目录
+git clone https://github.com/darknessomi/yapi.git
+cd yapi
 ```
 
-2.修改配置
+2. 修改配置
 
 ```bash
-cp vendors/config_example.json ./config.json # 复制完成后请修改相关配置
-vi ./config.json
+cp config_example.json config.json   # 复制完成后请修改相关配置
+vi config.json
 ```
 
 配置如下，主要配置 MongoDB 数据库，以及 Admin 账号。
@@ -41,77 +41,46 @@ vi ./config.json
 ```
 > db.user 和 db.pass 是 mongodb 的用户名和密码，如果没有开启 mongo 认证功能，请删除这两个选项。
 
-3.安装依赖
+3. 安装依赖
 
 ```bash
-cd vendors
-npm install  --registry https://registry.npm.taobao.org # 安装依赖
+npm install
 ```
 
-4.初始化
+4. 初始化
 
 ```bash
-npm run install-server  # 安装程序会初始化数据库索引和管理员账号，管理员账号名可在 config.json 配置
+npm run install-server   # 安装程序会初始化数据库索引和管理员账号，管理员账号名可在 config.json 配置
 # 默认输出
 # 初始化管理员账号成功,账号名："admin@admin.com"，密码："yapi.pro"
 ```
 
-5.启动开发机
+5. 启动开发环境
 
 ```bash
 npm run dev
-# 启动服务器后，请访问 127.0.0.1:{config.json配置的端口}，初次运行会有个编译的过程，请耐心等候
-# 127.0.0.1:3011
+# 后端 + Vite 前端 dev server，浏览器访问 http://127.0.0.1:3000
 ```
-
-目录结构
-
-```
-|-- config.json
-|-- init.lock
-|-- log
-`-- vendors
-    |-- CHANGELOG.md
-    |-- LICENSE
-    |-- README.md
-    |-- client
-    |-- common
-    |-- config_example.json
-    |-- doc
-    |-- exts
-    |-- nodemon.json
-    |-- npm-debug.log
-    |-- package.json
-    |-- plugin.json
-    |-- server
-    |-- static
-    |-- test
-    |-- webpack.alias.js
-    |-- yapi-base-flow.jpg
-    |-- ydocfile.js
-    `-- ykit.config.js
-```
-
-
 
 ## 技术栈说明
 
 后端： koa mongoose
 
-前端： react redux
+前端： react redux vite
 
 ## 启动开发环境服务器
 
 ```bash
-  cd vendors
-  npm run dev
-  # 启动服务器后，请访问 127.0.0.1:{config.json配置的端口}，初次运行会有个编译的过程，请耐心等候
+# 终端 1：后端
+npm run dev-server
+
+# 终端 2：前端 Vite dev server
+npm run dev-client
 ```
 
 ## 启动生产环境服务器
 
 ```bash
-  cd vendors
-  ykit pack -m
-  node server/app.js
+npm run build-client   # 产物输出到 static/prd
+node server/app.js
 ```

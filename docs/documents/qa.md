@@ -28,12 +28,12 @@
 
 ## Q4 发现了 Bug 怎么办？
 
-请反馈到 <a href="https://github.com/yapi-pro/yapi/issues" _blank="target">Github</a>，功能性的问题我们会在一周内修复，并在每周一发布新的版本 Tag.
+请反馈到 <a href="https://github.com/darknessomi/yapi/issues" _blank="target">Github</a>。
 
 ## Q5 部署不成功怎么办？
 
-1. 确保 node 版本=> 7.6,请运行 node -v 查看版本号
-2. 确保 mongodb 版本 => 2.6，请运行 mongo --version 查看版本号
+1. 确保 node 版本 >= 20，请运行 `node -v` 查看版本号
+2. 确保 mongodb 版本 >= 6，请运行 `mongod --version` 查看版本号
 3. 确保安装了 npm, 运行 npm -v 查看版本号
 4. 确保安装了 git,运行 git --version 查看版本号
 

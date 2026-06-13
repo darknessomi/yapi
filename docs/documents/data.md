@@ -67,11 +67,19 @@ v1.3.23+ 增加数据导入的3种同步方式  normal, good, mergin
 
 ## 通过命令行导入接口数据
 
-YApi 支持通过命令行导入接口数据，他的应用场景是做自动化集成，比如配合 swagger ，接口文档前端不用维护，交由后端生成。
+YApi 支持通过命令行导入接口数据，适用场景是做自动化集成，比如配合 Swagger，接口文档前端不用维护，交由后端生成。
 
-### 使用方法
+> 说明：原 YApi Pro 的 `yapi-pro-cli` 工具**与本 fork 无关**。推荐在 Web 界面使用 Swagger / Postman / HAR 导入；若需自动化，可调用项目 OpenAPI（`项目设置 -> token` 获取 token，详见 openapi 文档）。
 
-第一步，确保 `yapi-pro-cli >= 1.5.2` 版本，如果低于此版本请升级 `yapi-pro-cli` 工具
+### 方式一：Web 界面导入（推荐）
+
+在项目「数据管理」页面选择 Swagger / Postman / HAR 等格式上传即可。
+
+### 方式二：原 yapi-pro-cli（旧版，不推荐）
+
+以下为原 YApi Pro 文档，仅供从旧环境迁移参考；本 fork 未维护 `yapi-pro-cli`，不保证可用。
+
+第一步，确保 `yapi-pro-cli >= 1.5.2` 版本
 
 ```
 npm install -g yapi-pro-cli

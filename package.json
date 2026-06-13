@@ -1,7 +1,11 @@
 {
   "name": "yapi-pro",
   "version": "1.9.6",
-  "description": "YApi Pro",
+  "description": "YApi 可视化接口管理平台社区维护 fork：修复依赖兼容性，升级至 Node 20 / MongoDB 6，提供开箱即用的 Docker Compose 部署方案",
+  "homepage": "https://github.com/darknessomi/yapi",
+  "bugs": {
+    "url": "https://github.com/darknessomi/yapi/issues"
+  },
   "main": "server/app.js",
   "scripts": {
     "dev-copy-icon": "cp -r static/iconfont ./",
@@ -21,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:yapi-pro/yapi.git"
+    "url": "https://github.com/darknessomi/yapi.git"
   },
   "author": "",
   "license": "Apache-2.0",

@@ -1,6 +1,7 @@
 # 内网部署
 
-* [安装](index.md#安装)
+* [Docker Compose 部署（推荐）](index.md#方式一-docker-compose-部署推荐)
+* [源码部署](index.md#方式二-源码部署)
 * [服务器管理](index.md#服务器管理)
 * [升级](index.md#升级)
 

@@ -160,7 +160,7 @@ docker compose exec mongo mongorestore --db yapi /tmp/yapi-backup/yapi
 如需脱离 Docker 直接在主机运行：
 
 ### 环境要求
-* Node.js 18+（见 `package.json` 的 `engines`）
+* Node.js 20+（见 `package.json` 的 `engines`）
 * MongoDB 6+
 * git
 

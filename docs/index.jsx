@@ -1,10 +1,10 @@
 ---
 banner:
   name: 'YApi'
-  desc: '旨在为开发、产品、测试人员提供更优雅的接口管理服务。可以帮助开发者轻松创建、发布、维护 API'
+  desc: '社区维护 fork：修复依赖兼容性，升级至 Node 20 / MongoDB 6，提供开箱即用的 Docker Compose 部署方案'
   btns: 
     - { name: '开始', href: './documents/index.html', primary: true }
-    - { name: 'Github >', href: 'https://github.com/yapi-pro/yapi' }
+    - { name: 'Github >', href: 'https://github.com/darknessomi/yapi' }
 features: 
   - { name: '权限管理', desc: 'YApi 成熟的团队管理扁平化项目权限配置满足各类企业的需求' }
   - { name: '可视化接口管理', desc: '基于 websocket 的多人协作接口编辑功能和类 postman 测试工具，让多人协作成倍提升开发效率' }
@@ -22,8 +22,8 @@ footer:
       - { name: 'YMFE', href: 'https://ymfe.org/' }
       - { name: 'YMFE Blog', href: 'https://blog.ymfe.org/' }
     Git仓库:
-      - { name: 'Github', href: 'https://github.com/yapi-pro/yapi' }
-      - { name: 'Github Issue', href: 'https://github.com/yapi-pro/yapi/issues' }
+      - { name: 'Github', href: 'https://github.com/darknessomi/yapi' }
+      - { name: 'Github Issue', href: 'https://github.com/darknessomi/yapi/issues' }
 
 ---
 {

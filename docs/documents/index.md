@@ -1,4 +1,7 @@
 # YApi
+
+> 本 fork 由 [darknessomi/yapi](https://github.com/darknessomi/yapi) 社区维护。功能说明沿用原 YApi 文档，部署与升级请以本仓库 README 为准。
+
 在开始使用 YApi 之前，我们先来熟悉一下 YApi 的网站结构，这将让你快速了解YApi。
 
 ## 登录与注册
