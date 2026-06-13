@@ -53,7 +53,7 @@ class syncModel extends baseModel {
     let id = data.id;
     delete data.id;
     data.up_time = yapi.commons.time();
-    return this.model.update({
+    return this.model.updateMany({
       _id: id
     }, data)
   }
@@ -61,19 +61,19 @@ class syncModel extends baseModel {
   upById(id, data) {
     delete data.id;
     data.up_time = yapi.commons.time();
-    return this.model.update({
+    return this.model.updateMany({
       _id: id
     }, data)
   }
 
   del(id){
-    return this.model.remove({
+    return this.model.deleteMany({
       _id: id
     })
   }
 
   delByProjectId(projectId){
-    return this.model.remove({
+    return this.model.deleteMany({
       project_id: projectId
     })
   }

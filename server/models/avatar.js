@@ -20,7 +20,7 @@ class avatarModel extends baseModel {
   }
 
   up(uid, basecode, type) {
-    return this.model.update(
+    return this.model.updateMany(
       {
         uid: uid
       },

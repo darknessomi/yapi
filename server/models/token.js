@@ -33,7 +33,7 @@ class tokenModel extends baseModel {
   }
 
   up(project_id, token) {
-    return this.model.update(
+    return this.model.updateMany(
       {
         project_id: project_id
       },

@@ -10,7 +10,7 @@ const interfaceModel = require('../models/interface.js');
 const userModel = require('../models/user.js');
 const json5 = require('json5');
 const _ = require('underscore');
-const Ajv = require('ajv');
+const Ajv = require('ajv-draft-04');
 const Mock = require('mockjs');
 const sandboxFn = require('./sandbox')
 
@@ -362,7 +362,9 @@ exports.validateParams = (schema2, params) => {
     allErrors: true,
     coerceTypes: true,
     useDefaults: true,
-    removeAdditional: flag ? false : true
+    removeAdditional: flag ? false : true,
+    validateSchema: false,
+    strict: false
   });
 
   var localize = require('ajv-i18n');

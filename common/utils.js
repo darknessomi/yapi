@@ -2,7 +2,7 @@ const Mock = require('mockjs');
 const filter = require('./power-string.js').filter;
 const stringUtils = require('./power-string.js').utils;
 const json5 = require('json5');
-const Ajv = require('ajv');
+const Ajv = require('ajv-draft-04');
 /**
  * 作用：解析规则串 key ，然后根据规则串的规则以及路径找到在 json 中对应的数据
  * 规则串：$.{key}.{body||params}.{dataPath} 其中 body 为返回数据，params 为请求数据，datapath 为数据的路径
@@ -252,13 +252,10 @@ exports.timeago = function(timestamp) {
 exports.schemaValidator = function(schema, params) {
   try {
     const ajv = new Ajv({
-      format: false,
-      meta: false,
-      schemaId: 'auto',
-      validateSchema: false
+      validateSchema: false,
+      strict: false,
+      allErrors: true
     });
-    const metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
-    ajv.addMetaSchema(metaSchema);
     const localize = require('ajv-i18n');
 
     schema = schema || {

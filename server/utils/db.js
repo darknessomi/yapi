@@ -2,6 +2,20 @@ const mongoose = require('mongoose');
 const yapi = require('../yapi.js');
 const autoIncrement = require('./mongoose-auto-increment');
 
+// Mongoose 6 defaults strictQuery to true; YApi relies on Mongoose 5 behavior.
+mongoose.set('strictQuery', false);
+
+const DEPRECATED_MONGO_OPTIONS = [
+  'useNewUrlParser',
+  'useUnifiedTopology',
+  'useFindAndModify',
+  'useCreateIndex',
+  'poolSize',
+  'autoReconnect',
+  'reconnectTries',
+  'reconnectInterval'
+];
+
 function model(model, schema) {
   if (schema instanceof mongoose.Schema === false) {
     schema = new mongoose.Schema(schema);
@@ -22,6 +36,9 @@ function connect(callback) {
   }
 
   options = Object.assign({}, options, config.db.options);
+  DEPRECATED_MONGO_OPTIONS.forEach(key => {
+    delete options[key];
+  });
 
   var connectString = '';
 
