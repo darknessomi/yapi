@@ -1,4 +1,3 @@
-const moment = require('moment');
 const constants = require('./constants/variable');
 const Mock = require('mockjs');
 const json5 = require('json5');
@@ -78,7 +77,9 @@ exports.checkAuth = (action, role) => {
 };
 
 exports.formatTime = timestamp => {
-  return moment.unix(timestamp).format('YYYY-MM-DD HH:mm:ss');
+  const date = new Date(Number(timestamp) * 1000);
+  const pad = value => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 };
 
 // 防抖函数，减少高频触发的函数执行的频率

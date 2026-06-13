@@ -60,6 +60,25 @@ describe('commons', () => {
     ).toEqual({ a: 2 });
   });
 
+  it('async sandbox executes script in worker', async () => {
+    const sandboxFn = require('../../server/utils/sandbox.js');
+    const result = await sandboxFn({ a: 1 }, 'a=2');
+    expect(result).toEqual({ a: 2 });
+  });
+
+  it('async sandbox restores assert and log callbacks', async () => {
+    const sandboxFn = require('../../server/utils/sandbox.js');
+    const logs = [];
+    const context = {
+      status: 200,
+      assert: require('assert'),
+      log: msg => logs.push(String(msg))
+    };
+    const result = await sandboxFn(context, 'assert.equal(status, 200); log("ok")');
+    expect(result.status).toBe(200);
+    expect(logs).toEqual(['ok']);
+  });
+
   it('handleVarPath', () => {
     let result = [];
     let pathname = '/a/:id';

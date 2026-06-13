@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Table, Select, Button, Modal, Row, Col, message, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 import './MemberList.scss';
-import { autobind } from 'core-decorators';
+import { autobind } from 'common/autobind.js';
 import {
   fetchGroupMemberList,
   fetchGroupMsg,

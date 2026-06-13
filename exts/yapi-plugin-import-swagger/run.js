@@ -1,6 +1,19 @@
 const _ = require('underscore')
 const swagger = require('swagger-client');
-const compareVersions = require('compare-versions');
+
+function compareVersions(left, right) {
+  const leftParts = String(left).split('.').map(Number);
+  const rightParts = String(right).split('.').map(Number);
+  const length = Math.max(leftParts.length, rightParts.length);
+
+  for (let index = 0; index < length; index++) {
+    const leftValue = leftParts[index] || 0;
+    const rightValue = rightParts[index] || 0;
+    if (leftValue > rightValue) return 1;
+    if (leftValue < rightValue) return -1;
+  }
+  return 0;
+}
 
   var SwaggerData, isOAS3;
   function handlePath(path) {

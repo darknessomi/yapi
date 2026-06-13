@@ -1,132 +1,68 @@
-const ldap = require('ldapjs');
+const { Client } = require('ldapts');
 const yapi = require('../yapi.js');
 
-exports.ldapQuery = (username, password) => {
-  // const deferred = Q.defer();
+function rejectMsg(message) {
+  return Promise.reject({ type: false, message });
+}
 
-  return new Promise((resolve, reject) => {
-    const { ldapLogin } = yapi.WEBCONFIG;
+exports.ldapQuery = async (username, password) => {
+  const { ldapLogin } = yapi.WEBCONFIG;
+  const client = new Client({ url: ldapLogin.server });
 
-    //  使用ldapjs库创建一个LDAP客户端
-    const client = ldap.createClient({
-      url: ldapLogin.server
+  try {
+    if (ldapLogin.bindPassword) {
+      try {
+        await client.bind(ldapLogin.baseDn, ldapLogin.bindPassword);
+      } catch (err) {
+        return rejectMsg(`LDAP server绑定失败: ${err}`);
+      }
+    }
+
+    const searchDn = ldapLogin.searchDn;
+    const searchStandard = ldapLogin.searchStandard;
+    let customFilter;
+    if (/^(&|\|)/gi.test(searchStandard)) {
+      customFilter = searchStandard.replace(/%s/g, username);
+    } else {
+      customFilter = `${searchStandard}=${username}`;
+    }
+
+    const { searchEntries, searchReferences } = await client.search(searchDn, {
+      filter: `(${customFilter})`,
+      scope: 'sub'
     });
 
-    client.once('error', err => {
-      if (err) {
-        let msg = {
-          type: false,
-          message: `once: ${err}`
-        };
-        reject(msg);
-      }
-    });
-    // 注册事件处理函数
-    const ldapSearch = (err, search) => {
-      const users = [];
-      if (err) {
-        let msg = {
-          type: false,
-          message: `ldapSearch: ${err}`
-        };
-        reject(msg);
-      }
-      // 查询结果事件响应
-      search.on('searchEntry', entry => {
-        if (entry) {
-          users.push(entry.pojo || entry.object);
-        }
-      });
-      // 查询错误事件
-      search.on('error', e => {
-        if (e) {
-          let msg = {
-            type: false,
-            message: `searchErr: ${e}`
-          };
-          reject(msg);
-        }
-      });
+    if (searchReferences && searchReferences.length > 0) {
+      console.log(
+        'referral: ' +
+          searchReferences
+            .map(referral => (Array.isArray(referral) ? referral.join() : String(referral)))
+            .join()
+      );
+    }
 
-      search.on('searchReference', referral => {
-        // if (referral) {
-        //   let msg = {
-        //     type: false,
-        //     message: `searchReference: ${referral}`
-        //   };
-        //   reject(msg);
-        // }
-        console.log('referral: ' + referral.uris.join());
-      });
-      // 查询结束
-      search.on('end', () => {
-        if (users.length > 0) {
-          client.bind(users[0].dn, password, e => {
-            if (e) {
-              let msg = {
-                type: false,
-                message: `用户名或密码不正确: ${e}`
-              };
-              reject(msg);
-            } else {
-              let msg = {
-                type: true,
-                message: `验证成功`,
-                info: users[0]
-              };
-              resolve(msg);
-            }
-            client.unbind();
-          });
-        } else {
-          let msg = {
-            type: false,
-            message: `用户名不存在`
-          };
-          reject(msg);
-          client.unbind();
-        }
-      });
+    if (!searchEntries.length) {
+      return rejectMsg('用户名不存在');
+    }
+
+    const user = searchEntries[0];
+    try {
+      await client.bind(user.dn, password);
+    } catch (err) {
+      return rejectMsg(`用户名或密码不正确: ${err}`);
+    }
+
+    return {
+      type: true,
+      message: '验证成功',
+      info: user
     };
-    // 将client绑定LDAP Server
-    // 第一个参数： 是用户，必须是从根结点到用户节点的全路径
-    // 第二个参数： 用户密码
-    return new Promise((resolve, reject) => {
-      if (ldapLogin.bindPassword) {
-        client.bind(ldapLogin.baseDn, ldapLogin.bindPassword, err => {
-          if (err) {
-            let msg = {
-              type: false,
-              message: `LDAP server绑定失败: ${err}`
-            };
-            reject(msg);
-          }
-
-          resolve();
-        });
-      } else {
-        resolve();
-      }
-    }).then(() => {
-      const searchDn = ldapLogin.searchDn;
-      const searchStandard = ldapLogin.searchStandard;
-      // 处理可以自定义filter
-      let customFilter;
-      if (/^(&|\|)/gi.test(searchStandard)) {
-        customFilter = searchStandard.replace(/%s/g,username);
-      } else {
-        customFilter = `${searchStandard}=${username}`;
-      }
-      const opts = {
-        // filter: `(${searchStandard}=${username})`,
-        filter: `(${customFilter})`,
-        scope: 'sub'
-      };
-
-      // 开始查询
-      // 第一个参数： 查询基础路径，代表在查询用户信息将在这个路径下进行，该路径由根结点开始
-      // 第二个参数： 查询选项
-      client.search(searchDn, opts, ldapSearch);
-    });
-  });
+  } catch (err) {
+    if (err && err.type === false) {
+      return rejectMsg(err.message);
+    }
+    return rejectMsg(String(err.message || err));
+  } finally {
+    await client.unbind().catch(() => {});
+  }
 };

@@ -111,7 +111,7 @@ export default defineConfig(({ mode }) => {
         common: path.resolve(__dirname, 'common'),
         exts: path.resolve(__dirname, 'exts'),
         axios: path.resolve(__dirname, 'node_modules/axios/dist/axios.js'),
-        events: path.resolve(__dirname, 'node_modules/events/events.js'),
+        events: path.resolve(__dirname, 'common/events-shim.js'),
         'json-schema-editor-visual': path.resolve(
           __dirname,
           'node_modules/json-schema-editor-visual/package/index.js'
@@ -158,7 +158,6 @@ export default defineConfig(({ mode }) => {
         'react-redux',
         'react-router-dom',
         'mockjs',
-        'moment',
         'brace',
         'json5',
         'axios',

@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const yapi = require('../yapi.js');
-const sha1 = require('sha1');
+const crypto = require('crypto');
 const logModel = require('../models/log.js');
 const projectModel = require('../models/project.js');
 const interfaceColModel = require('../models/interfaceCol.js');
@@ -168,7 +168,8 @@ exports.getIp = ctx => {
 };
 
 exports.generatePassword = (password, passsalt) => {
-  return sha1(password + sha1(passsalt));
+  const saltHash = crypto.createHash('sha1').update(passsalt).digest('hex');
+  return crypto.createHash('sha1').update(password + saltHash).digest('hex');
 };
 
 exports.expireDate = day => {

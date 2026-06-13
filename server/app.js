@@ -44,8 +44,20 @@ app.use(async (ctx, next) => {
 });
 
 app.use(async (ctx, next) => {
+  if (ctx.path === '/' || ctx.path === '/index.html') {
+    ctx.set('Cache-Control', 'no-cache');
+  }
+  await next();
+});
+
+app.use(async (ctx, next) => {
   if (ctx.path.indexOf('/prd') === 0) {
-    ctx.set('Cache-Control', 'max-age=8640000000');
+    const isHashedAsset = /\/[^/]+@[^/]+\.(js|css)(\.gz)?$/.test(ctx.path);
+    if (isHashedAsset) {
+      ctx.set('Cache-Control', 'max-age=8640000000, immutable');
+    } else if (ctx.path === '/prd/assets.js') {
+      ctx.set('Cache-Control', 'no-cache');
+    }
     if (yapi.commons.fileExist(yapi.path.join(yapi.WEBROOT, 'static', ctx.path + '.gz'))) {
       if (ctx.path.endsWith('.css')) {
         ctx.type = 'text/css';

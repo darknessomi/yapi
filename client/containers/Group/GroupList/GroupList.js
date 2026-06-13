@@ -2,7 +2,7 @@ import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Icon, Modal, Input, message,Spin,  Row, Menu, Col, Popover, Tooltip } from 'antd';
-import { autobind } from 'core-decorators';
+import { autobind } from 'common/autobind.js';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 const { TextArea } = Input;

@@ -56,5 +56,18 @@ if (gzFiles.length) {
 }
 
 const output = 'window.WEBPACK_ASSETS = ' + JSON.stringify(assets) + ';\n';
-fs.writeFileSync(path.join(prdDir, 'assets.js'), output);
+const assetsPath = path.join(prdDir, 'assets.js');
+fs.writeFileSync(assetsPath, output);
+
+const assetVersion = indexEntry.file.replace(/^index@/, '').replace(/\.js$/, '');
+const indexHtmlPath = path.join(__dirname, '../static/index.html');
+const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+const nextIndexHtml = indexHtml.replace(
+  /<script src="\/prd\/assets\.js(?:\?[^"]*)?"><\/script>/,
+  `<script src="/prd/assets.js?v=${assetVersion}"></script>`
+);
+if (nextIndexHtml !== indexHtml) {
+  fs.writeFileSync(indexHtmlPath, nextIndexHtml);
+}
+
 console.log('Generated static/prd/assets.js');

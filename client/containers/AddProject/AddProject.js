@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Button, Form, Input, Icon, Tooltip, Select, message, Row, Col, Radio } from 'antd';
 import { addProject } from '../../reducer/modules/project.js';
 import { fetchGroupList } from '../../reducer/modules/group.js';
-import { autobind } from 'core-decorators';
+import { autobind } from 'common/autobind.js';
 import { setBreadcrumb } from '../../reducer/modules/user';
 const { TextArea } = Input;
 const FormItem = Form.Item;

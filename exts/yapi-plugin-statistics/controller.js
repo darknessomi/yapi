@@ -11,7 +11,6 @@ const interfaceCaseModel = require('models/interfaceCase.js');
 const yapi = require('yapi.js');
 const commons = require('./util.js');
 const os = require('os');
-let cpu = require('cpu-load');
 
 class statisMockController extends baseController {
   constructor(ctx) {
@@ -164,10 +163,14 @@ class statisMockController extends baseController {
   }
 
   cupLoad() {
-    return new Promise((resolve) => {
-      cpu(1000, function(load) {
+    return new Promise(resolve => {
+      const start = process.cpuUsage();
+      setTimeout(() => {
+        const usage = process.cpuUsage(start);
+        const elapsedUs = 1000 * 1000;
+        const load = Math.min(1, (usage.user + usage.system) / elapsedUs);
         resolve(load);
-      });
+      }, 1000);
     });
   }
 }
