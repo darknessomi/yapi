@@ -13,14 +13,6 @@ describe('MarkdownEditor helpers', () => {
     expect(getEditorHtml(editor)).toBe('<p>hello</p>');
   });
 
-  it('falls back to getHtml (legacy tui-editor)', () => {
-    const editor = {
-      getHtml: () => '<p>legacy</p>'
-    };
-
-    expect(getEditorHtml(editor)).toBe('<p>legacy</p>');
-  });
-
   it('reads markdown from editor instance', () => {
     const editor = {
       getMarkdown: () => '# title'

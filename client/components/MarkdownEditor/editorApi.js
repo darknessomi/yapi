@@ -5,9 +5,6 @@ export function getEditorHtml(editor) {
   if (typeof editor.getHTML === 'function') {
     return editor.getHTML();
   }
-  if (typeof editor.getHtml === 'function') {
-    return editor.getHtml();
-  }
   return '';
 }
 
