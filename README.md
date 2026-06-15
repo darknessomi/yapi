@@ -13,6 +13,7 @@
 2. 单元测试迁移至 Vitest，新增 GitHub Actions CI
 3. 升级 Node 20 / Koa 3 / Mongoose 6 / ajv v8 等核心依赖
 4. 重写部署升级文档，修复 Docker config.json 加载
+5. GitHub Actions 自动构建并推送多架构（amd64/arm64）Docker 镜像到 [GHCR](https://github.com/darknessomi/yapi/pkgs/container/yapi)（`ghcr.io/darknessomi/yapi`），支持 `latest` / 语义化版本 / 分支标签
 
 ## YApi 可视化接口管理平台
 
@@ -43,9 +44,25 @@ YApi 是<strong>高效</strong>、<strong>易用</strong>、<strong>功能强大
 
 ### 安装与启动
 
+**方式一：拉取预编译镜像（推荐）**
+
+[docker-compose.yml](docker-compose.yml) 使用 GHCR 预编译镜像，无需本地构建：
+
 ```bash
-# 构建并启动（首次约 4 分钟；仅改业务代码时 rebuild 约数秒）
-docker compose up -d --build
+docker compose up -d
+
+# 访问 http://127.0.0.1:3000
+```
+
+镜像地址：[ghcr.io/darknessomi/yapi](https://github.com/darknessomi/yapi/pkgs/container/yapi)，可用 tag 包括 `latest`、`1.10`、`1.10.1` 等，支持 `linux/amd64` 与 `linux/arm64`。如需固定版本，将 `docker-compose.yml` 中的 `:latest` 改为具体 tag。
+
+**方式二：本地源码构建**
+
+如需从源码自行构建镜像，使用 [docker-compose.build.yml](docker-compose.build.yml)：
+
+```bash
+# 首次约 4 分钟；仅改业务代码时 rebuild 约数秒
+docker compose -f docker-compose.build.yml up -d --build
 
 # 访问 http://127.0.0.1:3000
 ```
@@ -69,16 +86,25 @@ docker compose down -v             # 停止并清除 MongoDB 数据（慎用）
 
 ### 升级
 
-本 fork 的升级即拉取本仓库最新代码并重建镜像，不会影响已有数据（数据存于 `mongo-data` 数据卷）。
+升级不会影响已有数据（数据存于 `mongo-data` 数据卷）。
+
+**预编译镜像方式（推荐）：**
 
 ```bash
-git pull                           # 拉取本仓库最新代码
-docker compose up -d --build yapi  # 重新构建并启动
+docker compose pull yapi           # 拉取最新镜像
+docker compose up -d yapi          # 重启服务
+```
+
+**本地源码构建方式：**
+
+```bash
+git pull                                                      # 拉取本仓库最新代码
+docker compose -f docker-compose.build.yml up -d --build yapi # 重新构建并启动
 ```
 
 ### 配置
 
-配置文件位于 `docker/config.json`（以只读方式挂载到容器内 `/yapi/config.json`），可按需修改端口、数据库连接、邮件等。修改后需 `docker compose up -d --build yapi` 重启生效。
+配置文件位于 `docker/config.json`（以只读方式挂载到容器内 `/yapi/config.json`），可按需修改端口、数据库连接、邮件等。修改后执行 `docker compose up -d yapi` 重启生效（无需 rebuild）。
 
 ```json
 {
@@ -129,7 +155,7 @@ node server/app.js     # 或 pm2 start server/app.js --name yapi
 修改 `docker/config.json`，把 `db.servername` / `port` / `DATABASE` 指向你现有的 MongoDB（例如宿主机 `host.docker.internal` 或局域网地址），并删除 `docker-compose.yml` 中的 `mongo` 服务及 `depends_on`，然后：
 
 ```bash
-docker compose up -d --build yapi
+docker compose up -d yapi
 ```
 
 `docker/start.sh` 会先尝试 `install.js`，因管理员已存在而失败后，自动检测到旧管理员账号存在，跳过初始化并正常启动——所以连旧库不会重复初始化数据。

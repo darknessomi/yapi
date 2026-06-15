@@ -2,7 +2,7 @@
 
 本 fork 推荐使用 [Docker Compose](https://github.com/darknessomi/yapi#部署推荐docker-compose) 部署，详见仓库 [README](https://github.com/darknessomi/yapi)。
 
-> 说明：原 YApi Pro 的 `yapi-pro-cli` 可视化部署、官方 Docker 镜像（yapipro/yapi）等**与本 fork 无关，已不再适用**。本 fork 通过本仓库源码 + Docker Compose 或源码方式部署和升级。
+> 说明：原 YApi Pro 的 `yapi-pro-cli` 可视化部署、官方 Docker 镜像（yapipro/yapi）等**与本 fork 无关，已不再适用**。本 fork 通过 GHCR 预编译镜像、Docker Compose 本地构建或源码方式部署和升级。
 
 建议部署成 http 站点，因 Chrome 浏览器安全限制，部署成 https 会导致测试功能在请求 http 站点时文件上传功能异常。
 
@@ -24,10 +24,27 @@ proxy_set_header Connection "upgrade";
 
 ### 方式一. Docker Compose 部署（推荐）
 
+**拉取预编译镜像（推荐）**
+
+[docker-compose.yml](https://github.com/darknessomi/yapi/blob/master/docker-compose.yml) 使用 [GHCR 预编译镜像](https://github.com/darknessomi/yapi/pkgs/container/yapi)（`ghcr.io/darknessomi/yapi`），无需本地构建：
+
 ```bash
 git clone https://github.com/darknessomi/yapi.git
 cd yapi
-docker compose up -d --build
+docker compose up -d
+# 访问 http://127.0.0.1:3000
+```
+
+可用 tag 包括 `latest`、`1.10`、`1.10.1` 等，支持 `linux/amd64` 与 `linux/arm64`。如需固定版本，将 `docker-compose.yml` 中的 `:latest` 改为具体 tag。
+
+**本地源码构建**
+
+如需从源码自行构建镜像，使用 [docker-compose.build.yml](https://github.com/darknessomi/yapi/blob/master/docker-compose.build.yml)：
+
+```bash
+git clone https://github.com/darknessomi/yapi.git
+cd yapi
+docker compose -f docker-compose.build.yml up -d --build
 # 访问 http://127.0.0.1:3000
 ```
 
@@ -62,11 +79,18 @@ node server/app.js
 
 ## 升级
 
-**Docker Compose：**
+**Docker Compose（预编译镜像，推荐）：**
+
+```bash
+docker compose pull yapi
+docker compose up -d yapi
+```
+
+**Docker Compose（本地源码构建）：**
 
 ```bash
 git pull
-docker compose up -d --build yapi
+docker compose -f docker-compose.build.yml up -d --build yapi
 ```
 
 **源码 / pm2：**
@@ -81,7 +105,7 @@ pm2 restart yapi
 从旧版 YApi / YApi Pro 迁移说明见仓库 [README — 从旧版升级到本 fork](https://github.com/darknessomi/yapi#从旧版升级到本-fork)。
 
 ## 配置邮箱
-打开项目目录 config.json 文件，新增 mail 配置， 替换默认的邮箱配置
+打开项目目录 config.json 文件（Docker Compose 部署时为 `docker/config.json`），新增 mail 配置， 替换默认的邮箱配置
 ```json
 {
   "port": "*****",
@@ -101,10 +125,12 @@ pm2 restart yapi
 ```
 如何申请STMP服务器账号和密码可以参考下面的教程：<a href="https://jingyan.baidu.com/article/fdbd42771da9b0b89e3f48a8.html" target="_blank">如何开通电子邮箱的SMTP功能</a>
 
+Docker Compose 部署修改配置后，执行 `docker compose up -d yapi` 重启生效（无需 rebuild）。
+
 
 ## 配置LDAP登录
      
-打开项目目录 config.json 文件，添加如下字段：   
+打开项目目录 config.json 文件（Docker Compose 部署时为 `docker/config.json`），添加如下字段：   
 
 ```json
 {
@@ -139,13 +165,13 @@ pm2 restart yapi
 - `usernameKey`: ldap数据库存放用户名信息的字段（v1.3.21 新增 非必须）
 
 
-重启服务器后，可以在登录页看到如下画面，说明 ldap 配置成功
+重启服务器后，可以在登录页看到如下画面，说明 ldap 配置成功（Docker Compose 部署：`docker compose up -d yapi`）。
 
 <img src="./ldap.png" />
 
 
 ## 禁止注册
-在 config.json 添加 `closeRegister:true` 配置项,就可以禁止用户注册 yapi 平台，修改完成后，请重启 yapi 服务器。
+在 config.json 添加 `closeRegister:true` 配置项,就可以禁止用户注册 yapi 平台，修改完成后，请重启 yapi 服务器（Docker Compose 部署：`docker compose up -d yapi`）。
 
 ```json
 {
@@ -156,7 +182,7 @@ pm2 restart yapi
 ```
 
 ## 版本通知
-（v1.3.19+ 增加）在 config.json 添加 `"versionNotify": true` 配置项，就可以开启版本通知功能，默认为 `false`，修改完成后，请重启 yapi 服务器。
+（v1.3.19+ 增加）在 config.json 添加 `"versionNotify": true` 配置项，就可以开启版本通知功能，默认为 `false`，修改完成后，请重启 yapi 服务器（Docker Compose 部署：`docker compose up -d yapi`）。
 
 ```json
 {

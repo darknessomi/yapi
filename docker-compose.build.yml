@@ -12,7 +12,7 @@ services:
       start_period: 10s
 
   yapi:
-    image: ghcr.io/darknessomi/yapi:latest
+    build: .
     restart: unless-stopped
     ports:
       - "3000:3000"
