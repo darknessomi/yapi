@@ -9,9 +9,9 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /yapi/vendors
 
 COPY package.json package-lock.json .npmrc ./
-RUN npm install --omit=dev --registry https://registry.npmmirror.com
+RUN npm install --omit=dev
 
 COPY . .
 
 EXPOSE 3000
-ENTRYPOINT ["node"]
+ENTRYPOINT ["/bin/sh", "/yapi/vendors/docker/start.sh"]

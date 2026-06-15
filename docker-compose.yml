@@ -12,7 +12,8 @@ services:
       start_period: 10s
 
   yapi:
-    build: .
+    image: ghcr.io/darknessomi/yapi:latest
+    # build: .   # 如需本地构建，取消注释本行并把 image 行注释掉
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -21,7 +22,6 @@ services:
         condition: service_healthy
     volumes:
       - ./docker/config.json:/yapi/config.json:ro
-    entrypoint: ["/bin/sh", "/yapi/vendors/docker/start.sh"]
 
 volumes:
   mongo-data:
