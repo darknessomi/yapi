@@ -1,3 +1,6 @@
+## v1.10.2
+* fix(frontend): 修复 Ace Editor worker 在 SPA 路由下加载失败
+
 ## v1.10.0
 * feat(build): 前端构建从 ykit 迁移至 Vite
 * build: 升级 Vite 至 v7 与 Vitest 至 v4

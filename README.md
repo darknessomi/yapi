@@ -8,6 +8,9 @@
 > 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
 
 ### 最近更新
+**v1.10.2** (2026-06-16)
+1. 修复 Ace Editor worker 在 SPA 路由下加载失败，恢复 JSON/JS 语法校验
+
 **v1.10.0** (2026-06-13)
 1. 前端构建从 ykit 迁移至 Vite，升级 Vite 至 v7、Vitest 至 v4
 2. 单元测试迁移至 Vitest，新增 GitHub Actions CI
