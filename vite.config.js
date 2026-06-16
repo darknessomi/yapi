@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
@@ -64,6 +65,43 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 
+const ACE_WORKER_FILES = ['worker-javascript.js', 'worker-json.js', 'worker-xml.js', 'worker-html.js'];
+const ACE_BUILD_DIR = path.resolve(__dirname, 'node_modules/ace-builds/src-noconflict');
+
+function aceWorkerFiles() {
+  const base = '/prd/';
+
+  function serveWorker(req, res, next) {
+    const url = req.url?.split('?')[0] || '';
+    const workerName = ACE_WORKER_FILES.find(
+      name => url === `${base}${name}` || url === `/${name}` || url.endsWith(`/${name}`)
+    );
+    if (!workerName) {
+      next();
+      return;
+    }
+    res.setHeader('Content-Type', 'application/javascript');
+    res.end(fs.readFileSync(path.join(ACE_BUILD_DIR, workerName)));
+  }
+
+  function copyWorkers(outDir) {
+    fs.mkdirSync(outDir, { recursive: true });
+    ACE_WORKER_FILES.forEach(name => {
+      fs.copyFileSync(path.join(ACE_BUILD_DIR, name), path.join(outDir, name));
+    });
+  }
+
+  return {
+    name: 'ace-worker-files',
+    configureServer(server) {
+      server.middlewares.use(serveWorker);
+    },
+    writeBundle(_options, _bundle) {
+      copyWorkers(path.resolve(__dirname, 'static/prd'));
+    }
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production';
 
@@ -72,6 +110,7 @@ export default defineConfig(({ mode }) => {
     base: '/prd/',
     publicDir: false,
     plugins: [
+      aceWorkerFiles(),
       jsonSchemaEditorVisualEsm(),
       fixAntdIconInit(),
       treatJsAsJsx(),

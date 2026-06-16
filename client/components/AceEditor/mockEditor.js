@@ -1,5 +1,7 @@
 import ace from 'ace-builds/src-noconflict/ace';
 import Mock from 'mockjs';
+
+ace.config.set('basePath', import.meta.env.BASE_URL);
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/mode-xml';
