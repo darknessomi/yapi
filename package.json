@@ -22,7 +22,7 @@
     "build-client": "vite build && node scripts/generate-assets.js && node scripts/gzip-prd.js",
     "ensure-static-build": "node scripts/ensure-static-build.js",
     "docs": "ydoc build",
-    "prepare": "husky"
+    "prepare": "node .husky/install.mjs"
   },
   "repository": {
     "type": "git",
