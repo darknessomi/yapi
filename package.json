@@ -20,7 +20,9 @@
     "lint": "eslint client server exts scripts --ext .js,.jsx",
     "prebuild-client": "npm run generate-plugin-module",
     "build-client": "vite build && node scripts/generate-assets.js && node scripts/gzip-prd.js",
-    "docs": "ydoc build"
+    "ensure-static-build": "node scripts/ensure-static-build.js",
+    "docs": "ydoc build",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -80,6 +82,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
+    "husky": "^9.1.7",
     "json-schema-editor-visual": "^1.1.1",
     "less": "^3.13.1",
     "markdown-it-include": "^2.0.0",
