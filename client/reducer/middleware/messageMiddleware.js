@@ -10,7 +10,8 @@ export default () => next => action => {
     action.payload &&
     action.payload.data &&
     action.payload.data.errcode &&
-    action.payload.data.errcode !== 40011
+    action.payload.data.errcode !== 40011 &&
+    action.payload.data.errcode !== 406
   ) {
     message.error(action.payload.data.errmsg);
     throw new Error(action.payload.data.errmsg);

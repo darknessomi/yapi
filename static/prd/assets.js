@@ -1,1 +1,1 @@
-window.WEBPACK_ASSETS = {"manifest":{"js":"index@D2SMojWz.js"},"index.js":{"js":"index@D2SMojWz.js","css":"index@8-vrT4Ns.css"}};
+window.WEBPACK_ASSETS = {"manifest":{"js":"index@CS1Yv5B5.js"},"index.js":{"js":"index@CS1Yv5B5.js","css":"index@8-vrT4Ns.css"}};

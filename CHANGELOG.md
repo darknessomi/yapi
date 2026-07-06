@@ -1,3 +1,6 @@
+## v1.11.1
+* fix(auth): 修复已绑通行密钥账号密码登录时 406 被 messageMiddleware 拦截，邮件验证码输入框不显示
+
 ## v1.11.0
 * feat(auth): 支持 WebAuthn 通行密钥（Passkey）注册、登录与管理
 * feat(auth): 已绑定通行密钥的账号，在启用 mail 时密码登录需邮件验证码二次确认
