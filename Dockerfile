@@ -1,5 +1,6 @@
 FROM node:20-alpine
 ENV TZ="Asia/Shanghai"
+ENV HUSKY=0
 
 RUN apk add --no-cache python3 make g++
 
