@@ -167,6 +167,27 @@
         color: #657289;
         cursor: pointer;
       }
+      .passkey-panel {
+        line-height: 1.5;
+      }
+      .passkey-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .passkey-name {
+        min-width: 110px;
+        margin-right: 12px;
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .passkey-meta {
+        min-width: 160px;
+        margin-right: 12px;
+        color: rgba(71, 86, 99, 0.75);
+      }
+      .passkey-disabled {
+        color: rgba(71, 86, 99, 0.75);
+      }
     }
   }
 

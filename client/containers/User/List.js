@@ -155,6 +155,13 @@ class List extends Component {
         width: 150
       },
       {
+        title: '通行密钥',
+        dataIndex: 'passkey_bound',
+        key: 'passkey_bound',
+        width: 120,
+        render: passkeyBound => (passkeyBound ? '已绑定' : '未绑定')
+      },
+      {
         title: '更新日期',
         dataIndex: 'up_time',
         key: 'up_time',

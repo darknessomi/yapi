@@ -152,6 +152,13 @@ export function loginLdapActions(data) {
   };
 }
 
+export function loginPasskeyActions(data) {
+  return {
+    type: LOGIN,
+    payload: axios.post('/api/user/passkey/auth/verify', data)
+  };
+}
+
 export function regActions(data) {
   const { email, password, userName } = data;
   const param = {

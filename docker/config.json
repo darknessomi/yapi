@@ -9,5 +9,10 @@
   },
   "mail": {
     "enable": false
+  },
+  "passkey": {
+    "rpName": "YApi",
+    "rpID": "localhost",
+    "origin": "http://localhost:3000"
   }
 }

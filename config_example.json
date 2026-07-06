@@ -19,5 +19,10 @@
       "user": "***@163.com",
       "pass": "*****"
     }
+  },
+  "passkey": {
+    "rpName": "YApi",
+    "rpID": "localhost",
+    "origin": "http://localhost:3000"
   }
 }

@@ -12,6 +12,15 @@
   border: none !important;
   margin-top: .2rem;
   width: 100%;
+  color: #fff !important;
+  span {
+    color: #fff !important;
+  }
+}
+
+.login-secondary-button {
+  margin-top: .1rem;
+  width: 100%;
 }
 
 .ant-form-item {

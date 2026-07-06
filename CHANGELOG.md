@@ -1,3 +1,8 @@
+## v1.11.0
+* feat(auth): 支持 WebAuthn 通行密钥（Passkey）注册、登录与管理
+* feat(auth): 已绑定通行密钥的账号，在启用 mail 时密码登录需邮件验证码二次确认
+* test: 新增 passkey 工具函数与 challenge 模型单元测试
+
 ## v1.10.2
 * fix(frontend): 修复 Ace Editor worker 在 SPA 路由下加载失败
 

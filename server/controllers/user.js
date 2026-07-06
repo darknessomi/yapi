@@ -1,8 +1,24 @@
 const userModel = require('../models/user.js');
+const passkeyModel = require('../models/passkey.js');
+const passkeyChallengeModel = require('../models/passkeyChallenge.js');
 const yapi = require('../yapi.js');
 const baseController = require('./base.js');
 const common = require('../utils/commons.js');
 const ldap = require('../utils/ldap.js');
+const {
+  generateRegistrationOptions,
+  verifyRegistrationResponse,
+  generateAuthenticationOptions,
+  verifyAuthenticationResponse
+} = require('@simplewebauthn/server');
+const {
+  getPasskeyConfig,
+  bufferToBase64URL,
+  base64URLToBuffer,
+  createOtpCode,
+  hashOtpCode,
+  verifyOtpCode
+} = require('../utils/passkey.js');
 
 const interfaceModel = require('../models/interface.js');
 const groupModel = require('../models/group.js');
@@ -15,6 +31,61 @@ class userController extends baseController {
   constructor(ctx) {
     super(ctx);
     this.Model = yapi.getInst(userModel);
+  }
+
+  passkeyRes(user) {
+    return {
+      username: user.username,
+      role: user.role,
+      uid: user._id,
+      email: user.email,
+      add_time: user.add_time,
+      up_time: user.up_time,
+      type: user.type || 'site',
+      study: user.study
+    };
+  }
+
+  normalizeEmail(email) {
+    return (email || '').trim();
+  }
+
+  async sendPasswordLoginCode(email) {
+    if (!yapi.mail) {
+      return false;
+    }
+
+    const code = createOtpCode();
+    const challengeInst = yapi.getInst(passkeyChallengeModel);
+    await challengeInst.upsert({
+      email,
+      type: 'password_login',
+      challenge: hashOtpCode(email, code)
+    });
+
+    yapi.commons.sendMail({
+      to: email,
+      subject: '密码登录验证码',
+      contents: `<h3>YApi 密码登录验证码</h3><p>你的验证码是：<b>${code}</b></p><p>验证码 5 分钟内有效。如果不是你本人操作，请忽略此邮件。</p>`
+    });
+    return true;
+  }
+
+  async appendPasskeyBound(users) {
+    const list = Array.isArray(users) ? users : [];
+    const passkeyInst = yapi.getInst(passkeyModel);
+    const counts = await passkeyInst.countByUids(list.map(user => user._id || user.uid));
+    const boundMap = counts.reduce((map, item) => {
+      map[Number(item._id)] = item.count > 0;
+      return map;
+    }, {});
+
+    return list.map(user => {
+      const obj = user.toObject ? user.toObject() : { ...user };
+      const uid = obj._id || obj.uid;
+      obj.passkey_bound = !!boundMap[Number(uid)];
+      return obj;
+    });
   }
   /**
    * 用户登录接口
@@ -33,6 +104,7 @@ class userController extends baseController {
     let email = ctx.request.body.email;
     email = (email || '').trim();
     let password = ctx.request.body.password;
+    let otpCode = ctx.request.body.otp_code;
 
     if (!email) {
       return (ctx.body = yapi.commons.resReturn(null, 400, 'email不能为空'));
@@ -46,6 +118,33 @@ class userController extends baseController {
     if (!result) {
       return (ctx.body = yapi.commons.resReturn(null, 404, '该用户不存在'));
     } else if (yapi.commons.generatePassword(password, result.passsalt) === result.password) {
+      const passkeyInst = yapi.getInst(passkeyModel);
+      const userPasskeys = await passkeyInst.findByUid(result._id);
+      if (userPasskeys.length > 0 && yapi.mail) {
+        if (!otpCode) {
+          await this.sendPasswordLoginCode(email);
+          return (ctx.body = yapi.commons.resReturn(
+            { require_email_otp: true },
+            406,
+            '该账号已绑定通行密钥，密码登录需要邮件验证码'
+          ));
+        }
+
+        const challengeInst = yapi.getInst(passkeyChallengeModel);
+        const challenge = await challengeInst.getValid({
+          email,
+          type: 'password_login'
+        });
+        if (!challenge || !verifyOtpCode(email, otpCode, challenge.challenge)) {
+          return (ctx.body = yapi.commons.resReturn(null, 407, '邮件验证码错误或已过期'));
+        }
+
+        await challengeInst.del({
+          email,
+          type: 'password_login'
+        });
+      }
+
       this.setLoginCookie(result._id, result.passsalt);
 
       return (ctx.body = yapi.commons.resReturn(
@@ -168,6 +267,289 @@ class userController extends baseController {
     } catch (e) {
       yapi.commons.log(e.message, 'error');
       return (ctx.body = yapi.commons.resReturn(null, 401, e.message));
+    }
+  }
+
+  /**
+   * 获取当前用户已绑定通行密钥
+   * @interface /user/passkey/list
+   * @method GET
+   * @category user
+   */
+  async passkeyList(ctx) {
+    try {
+      let passkeyInst = yapi.getInst(passkeyModel);
+      let list = await passkeyInst.listByUid(this.getUid());
+      ctx.body = yapi.commons.resReturn(
+        list.map(item => ({
+          id: item._id,
+          name: item.name,
+          transports: item.transports || [],
+          deviceType: item.deviceType,
+          backedUp: item.backedUp,
+          add_time: item.add_time,
+          last_used_time: item.last_used_time
+        }))
+      );
+    } catch (e) {
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+    }
+  }
+
+  /**
+   * 生成通行密钥绑定选项
+   * @interface /user/passkey/register/options
+   * @method POST
+   * @category user
+   */
+  async passkeyRegisterOptions(ctx) {
+    try {
+      let user = this.$user;
+      let passkeyInst = yapi.getInst(passkeyModel);
+      let challengeInst = yapi.getInst(passkeyChallengeModel);
+      let userPasskeys = await passkeyInst.findByUid(this.getUid());
+      let { rpID, rpName } = getPasskeyConfig(ctx);
+
+      let options = await generateRegistrationOptions({
+        rpName,
+        rpID,
+        userID: Buffer.from(String(user._id)),
+        userName: user.email,
+        userDisplayName: user.username,
+        attestationType: 'none',
+        excludeCredentials: userPasskeys.map(passkey => ({
+          id: passkey.credentialID,
+          transports: passkey.transports || []
+        })),
+        authenticatorSelection: {
+          residentKey: 'preferred',
+          userVerification: 'preferred'
+        }
+      });
+
+      await challengeInst.upsert({
+        uid: this.getUid(),
+        type: 'register',
+        challenge: options.challenge
+      });
+
+      ctx.body = yapi.commons.resReturn(options);
+    } catch (e) {
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+    }
+  }
+
+  /**
+   * 校验并保存通行密钥绑定结果
+   * @interface /user/passkey/register/verify
+   * @method POST
+   * @category user
+   */
+  async passkeyRegisterVerify(ctx) {
+    try {
+      let response = ctx.request.body.response || ctx.request.body;
+      let name = ctx.request.body.name || '通行密钥';
+      let challengeInst = yapi.getInst(passkeyChallengeModel);
+      let challenge = await challengeInst.getValid({
+        uid: this.getUid(),
+        type: 'register'
+      });
+
+      if (!challenge) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥绑定请求已过期'));
+      }
+
+      let { rpID, origin } = getPasskeyConfig(ctx);
+      let verification = await verifyRegistrationResponse({
+        response,
+        expectedChallenge: challenge.challenge,
+        expectedOrigin: origin,
+        expectedRPID: rpID
+      });
+
+      if (!verification.verified || !verification.registrationInfo) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥绑定失败'));
+      }
+
+      let { credential, credentialDeviceType, credentialBackedUp } = verification.registrationInfo;
+      let passkeyInst = yapi.getInst(passkeyModel);
+      let repeated = await passkeyInst.findByCredentialID(credential.id);
+      if (repeated) {
+        return (ctx.body = yapi.commons.resReturn(null, 409, '该通行密钥已绑定'));
+      }
+
+      let now = yapi.commons.time();
+      let passkey = await passkeyInst.save({
+        uid: this.getUid(),
+        credentialID: credential.id,
+        publicKey: bufferToBase64URL(credential.publicKey),
+        counter: credential.counter,
+        transports: credential.transports || response.response?.transports || [],
+        deviceType: credentialDeviceType,
+        backedUp: credentialBackedUp,
+        name,
+        add_time: now,
+        last_used_time: 0
+      });
+
+      await challengeInst.del({
+        uid: this.getUid(),
+        type: 'register'
+      });
+
+      ctx.body = yapi.commons.resReturn({
+        id: passkey._id,
+        name: passkey.name,
+        transports: passkey.transports || [],
+        deviceType: passkey.deviceType,
+        backedUp: passkey.backedUp,
+        add_time: passkey.add_time,
+        last_used_time: passkey.last_used_time
+      });
+    } catch (e) {
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+    }
+  }
+
+  /**
+   * 删除当前用户通行密钥
+   * @interface /user/passkey/delete
+   * @method POST
+   * @category user
+   */
+  async passkeyDelete(ctx) {
+    try {
+      let id = ctx.request.body.id;
+      if (!id) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥 id 不能为空'));
+      }
+
+      let passkeyInst = yapi.getInst(passkeyModel);
+      let result = await passkeyInst.deleteByUidAndId(this.getUid(), id);
+      if (!result || result.deletedCount < 1) {
+        return (ctx.body = yapi.commons.resReturn(null, 404, '通行密钥不存在'));
+      }
+
+      ctx.body = yapi.commons.resReturn('ok');
+    } catch (e) {
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+    }
+  }
+
+  /**
+   * 按邮箱生成通行密钥登录选项
+   * @interface /user/passkey/auth/options
+   * @method POST
+   * @category user
+   */
+  async passkeyAuthOptions(ctx) {
+    try {
+      let email = this.normalizeEmail(ctx.request.body.email);
+      if (!email) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, 'email不能为空'));
+      }
+
+      let userInst = yapi.getInst(userModel);
+      let user = await userInst.findByEmail(email);
+      if (!user) {
+        return (ctx.body = yapi.commons.resReturn(null, 404, '该用户不存在'));
+      }
+
+      let passkeyInst = yapi.getInst(passkeyModel);
+      let userPasskeys = await passkeyInst.findByUid(user._id);
+      if (!userPasskeys.length) {
+        return (ctx.body = yapi.commons.resReturn(null, 404, '该用户未绑定通行密钥'));
+      }
+
+      let { rpID } = getPasskeyConfig(ctx);
+      let options = await generateAuthenticationOptions({
+        rpID,
+        allowCredentials: userPasskeys.map(passkey => ({
+          id: passkey.credentialID,
+          transports: passkey.transports || []
+        })),
+        userVerification: 'preferred'
+      });
+
+      let challengeInst = yapi.getInst(passkeyChallengeModel);
+      await challengeInst.upsert({
+        email,
+        type: 'auth',
+        challenge: options.challenge
+      });
+
+      ctx.body = yapi.commons.resReturn(options);
+    } catch (e) {
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+    }
+  }
+
+  /**
+   * 校验通行密钥登录结果
+   * @interface /user/passkey/auth/verify
+   * @method POST
+   * @category user
+   */
+  async passkeyAuthVerify(ctx) {
+    try {
+      let email = this.normalizeEmail(ctx.request.body.email);
+      let response = ctx.request.body.response || ctx.request.body;
+      if (!email) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, 'email不能为空'));
+      }
+
+      let challengeInst = yapi.getInst(passkeyChallengeModel);
+      let challenge = await challengeInst.getValid({
+        email,
+        type: 'auth'
+      });
+      if (!challenge) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥登录请求已过期'));
+      }
+
+      let userInst = yapi.getInst(userModel);
+      let user = await userInst.findByEmail(email);
+      if (!user) {
+        return (ctx.body = yapi.commons.resReturn(null, 404, '该用户不存在'));
+      }
+
+      let passkeyInst = yapi.getInst(passkeyModel);
+      let passkey = await passkeyInst.findByCredentialID(response.id);
+      if (!passkey || Number(passkey.uid) !== Number(user._id)) {
+        return (ctx.body = yapi.commons.resReturn(null, 404, '通行密钥不存在'));
+      }
+
+      let { rpID, origin } = getPasskeyConfig(ctx);
+      let verification = await verifyAuthenticationResponse({
+        response,
+        expectedChallenge: challenge.challenge,
+        expectedOrigin: origin,
+        expectedRPID: rpID,
+        credential: {
+          id: passkey.credentialID,
+          publicKey: base64URLToBuffer(passkey.publicKey),
+          counter: passkey.counter,
+          transports: passkey.transports || []
+        }
+      });
+
+      if (!verification.verified) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥登录失败'));
+      }
+
+      await passkeyInst.updateCounter(
+        passkey.credentialID,
+        verification.authenticationInfo.newCounter
+      );
+      await challengeInst.del({
+        email,
+        type: 'auth'
+      });
+      this.setLoginCookie(user._id, user.passsalt);
+
+      ctx.body = yapi.commons.resReturn(this.passkeyRes(user));
+    } catch (e) {
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
     }
   }
 
@@ -384,6 +766,7 @@ class userController extends baseController {
     const userInst = yapi.getInst(userModel);
     try {
       let user = await userInst.listWithPaging(page, limit);
+      user = await this.appendPasskeyBound(user);
       let count = await userInst.listCount();
       return (ctx.body = yapi.commons.resReturn({
         count: count,
@@ -637,6 +1020,7 @@ class userController extends baseController {
     }
 
     let queryList = await this.Model.search(q);
+    queryList = await this.appendPasskeyBound(queryList);
     let rules = [
       {
         key: '_id',
@@ -652,7 +1036,8 @@ class userController extends baseController {
       {
         key: 'up_time',
         alias: 'upTime'
-      }
+      },
+      'passkey_bound'
     ];
 
     let filteredRes = common.filterRes(queryList, rules);

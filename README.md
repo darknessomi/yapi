@@ -8,6 +8,11 @@
 > 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
 
 ### 最近更新
+**v1.11.0** (2026-07-06)
+1. 支持 WebAuthn 通行密钥（Passkey）：个人中心绑定/删除，登录页一键登录
+2. 已绑定通行密钥的账号，在启用 `mail` 时密码登录需邮件验证码二次确认
+3. 新增 `config.json` 的 `passkey` 配置项（见下方「通行密钥配置」）
+
 **v1.10.2** (2026-06-16)
 1. 修复 Ace Editor worker 在 SPA 路由下加载失败，恢复 JSON/JS 语法校验
 
@@ -57,7 +62,7 @@ docker compose up -d
 # 访问 http://127.0.0.1:3000
 ```
 
-镜像地址：[ghcr.io/darknessomi/yapi](https://github.com/darknessomi/yapi/pkgs/container/yapi)，可用 tag 包括 `latest`、`1.10`、`1.10.1` 等，支持 `linux/amd64` 与 `linux/arm64`。如需固定版本，将 `docker-compose.yml` 中的 `:latest` 改为具体 tag。
+镜像地址：[ghcr.io/darknessomi/yapi](https://github.com/darknessomi/yapi/pkgs/container/yapi)，可用 tag 包括 `latest`、`1.11.0`、`1.10` 等，支持 `linux/amd64` 与 `linux/arm64`。如需固定版本，将 `docker-compose.yml` 中的 `:latest` 改为具体 tag。
 
 **方式二：本地源码构建**
 
@@ -107,7 +112,9 @@ docker compose -f docker-compose.build.yml up -d --build yapi # 重新构建并�
 
 ### 配置
 
-配置文件位于 `docker/config.json`（以只读方式挂载到容器内 `/yapi/config.json`），可按需修改端口、数据库连接、邮件等。修改后执行 `docker compose up -d yapi` 重启生效（无需 rebuild）。
+配置文件位于 `docker/config.json`（以只读方式挂载到容器内 `/yapi/config.json`），可按需修改端口、数据库连接、邮件、通行密钥等。修改后执行 `docker compose up -d yapi` 重启生效（无需 rebuild）。
+
+源码部署时，在项目根目录创建 `config.json`（可参考 `config_example.json`）。
 
 ```json
 {
@@ -119,9 +126,48 @@ docker compose -f docker-compose.build.yml up -d --build yapi # 重新构建并�
     "DATABASE": "yapi",
     "port": 27017
   },
-  "mail": { "enable": false }
+  "mail": { "enable": false },
+  "passkey": {
+    "rpName": "YApi",
+    "rpID": "yapi.example.com",
+    "origin": "https://yapi.example.com"
+  }
 }
 ```
+
+#### 通行密钥配置（`passkey`）
+
+v1.11.0 起支持 WebAuthn 通行密钥。生产环境**必须**显式配置 `passkey`，且站点须通过 **HTTPS** 访问（本地开发可用 `http://localhost` 或 `http://127.0.0.1`）。
+
+| 字段 | 说明 |
+|------|------|
+| `rpName` | 注册时展示给用户的名称，默认 `YApi` |
+| `rpID` | Relying Party ID，须为访问域名的主机名（不含端口），如 `yapi.example.com` |
+| `origin` | 浏览器实际访问的完整来源，如 `https://yapi.example.com`；须与 `rpID`、协议一致 |
+
+未配置时，服务端会尝试从请求头自动推断 `rpID` 与 `origin`；反向代理或非标端口场景下容易校验失败，建议始终写死。
+
+**本地开发示例**（`config.json` 或 `docker/config.json`）：
+
+```json
+"passkey": {
+  "rpName": "YApi",
+  "rpID": "localhost",
+  "origin": "http://localhost:3000"
+}
+```
+
+**反向代理示例**（Nginx 将 `https://yapi.example.com` 转发到容器 3000 端口）：
+
+```json
+"passkey": {
+  "rpName": "YApi",
+  "rpID": "yapi.example.com",
+  "origin": "https://yapi.example.com"
+}
+```
+
+**与密码登录的关系**：用户在个人中心绑定通行密钥后，仍可使用密码登录。若已启用 `mail` 并完成 SMTP 配置，密码登录需先通过邮件验证码二次确认；未启用邮件时，密码登录不受通行密钥绑定影响。
 
 ## 从旧版升级到本 fork
 

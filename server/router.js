@@ -188,6 +188,36 @@ let routerConfig = {
       action: 'uploadAvatar',
       path: 'upload_avatar',
       method: 'post'
+    },
+    {
+      action: 'passkeyList',
+      path: 'passkey/list',
+      method: 'get'
+    },
+    {
+      action: 'passkeyRegisterOptions',
+      path: 'passkey/register/options',
+      method: 'post'
+    },
+    {
+      action: 'passkeyRegisterVerify',
+      path: 'passkey/register/verify',
+      method: 'post'
+    },
+    {
+      action: 'passkeyDelete',
+      path: 'passkey/delete',
+      method: 'post'
+    },
+    {
+      action: 'passkeyAuthOptions',
+      path: 'passkey/auth/options',
+      method: 'post'
+    },
+    {
+      action: 'passkeyAuthVerify',
+      path: 'passkey/auth/verify',
+      method: 'post'
     }
   ],
   project: [

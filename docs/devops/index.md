@@ -170,6 +170,43 @@ Docker Compose 部署修改配置后，执行 `docker compose up -d yapi` 重启
 <img src="./ldap.png" />
 
 
+## 配置通行密钥（Passkey）
+
+（v1.11.0+ 增加）在 config.json 添加 `passkey` 配置项，用于 WebAuthn 通行密钥注册与登录。Docker Compose 部署时修改 `docker/config.json`。
+
+生产环境须通过 **HTTPS** 访问，且 `origin` 须为浏览器实际访问的完整地址（含协议，非默认端口须带端口）；`rpID` 仅填主机名（不含协议和端口）。
+
+```json
+{
+  "port": "*****",
+  "adminAccount": "********",
+  "db": {...},
+  "mail": {...},
+  "passkey": {
+    "rpName": "YApi",
+    "rpID": "yapi.example.com",
+    "origin": "https://yapi.example.com"
+  }
+}
+```
+
+本地 Docker Compose 默认示例（访问 `http://localhost:3000`）：
+
+```json
+"passkey": {
+  "rpName": "YApi",
+  "rpID": "localhost",
+  "origin": "http://localhost:3000"
+}
+```
+
+若通过 `http://127.0.0.1:3000` 访问，须将 `origin` 改为 `http://127.0.0.1:3000`，`rpID` 改为 `127.0.0.1`。
+
+已绑定通行密钥的账号，在启用 `mail` 时密码登录需邮件验证码二次确认；未启用邮件时密码登录不受影响。
+
+修改完成后，执行 `docker compose up -d yapi` 重启生效（无需 rebuild）。
+
+
 ## 禁止注册
 在 config.json 添加 `closeRegister:true` 配置项,就可以禁止用户注册 yapi 平台，修改完成后，请重启 yapi 服务器（Docker Compose 部署：`docker compose up -d yapi`）。
 

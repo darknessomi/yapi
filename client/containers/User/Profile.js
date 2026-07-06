@@ -1,6 +1,7 @@
 import React, { PureComponent as Component } from 'react';
-import { Row, Col, Input, Button, Select, message, Upload, Tooltip } from 'antd';
+import { Row, Col, Input, Button, Select, message, Upload, Tooltip, Popconfirm } from 'antd';
 import axios from 'axios';
+import { startRegistration, browserSupportsWebAuthn } from '@simplewebauthn/browser';
 import { formatTime } from '../../common.js';
 import PropTypes from 'prop-types';
 import { setBreadcrumb, setImageUrl } from '../../reducer/modules/user';
@@ -76,12 +77,18 @@ class Profile extends Component {
       emailEdit: false,
       secureEdit: false,
       roleEdit: false,
+      passkeys: [],
+      passkeyLoading: false,
+      passkeySupported: false,
       userinfo: {}
     };
   }
 
   componentDidMount() {
     this._uid = this.props.match.params.uid;
+    this.setState({
+      passkeySupported: browserSupportsWebAuthn()
+    });
     this.handleUserinfo(this.props);
   }
 
@@ -110,16 +117,84 @@ class Profile extends Component {
     const { curUid } = this.props;
 
     axios.get('/api/user/find?id=' + id).then(res => {
-      _this.setState({
-        userinfo: res.data.data,
-        _userinfo: res.data.data
-      });
+      _this.setState(
+        {
+          userinfo: res.data.data,
+          _userinfo: res.data.data
+        },
+        () => {
+          if (curUid === +id) {
+            this.getPasskeyList();
+          }
+        }
+      );
       if (curUid === +id) {
         this.props.setBreadcrumb([{ name: res.data.data.username }]);
       } else {
         this.props.setBreadcrumb([{ name: '管理: ' + res.data.data.username }]);
       }
     });
+  };
+
+  getPasskeyList = () => {
+    axios.get('/api/user/passkey/list').then(
+      res => {
+        if (res.data.errcode === 0) {
+          this.setState({
+            passkeys: res.data.data || []
+          });
+        }
+      },
+      err => {
+        message.error(err.message);
+      }
+    );
+  };
+
+  addPasskey = async () => {
+    this.setState({ passkeyLoading: true });
+    try {
+      const optionsRes = await axios.post('/api/user/passkey/register/options');
+      if (optionsRes.data.errcode !== 0) {
+        return message.error(optionsRes.data.errmsg);
+      }
+
+      const registerResponse = await startRegistration({
+        optionsJSON: optionsRes.data.data
+      });
+
+      const verifyRes = await axios.post('/api/user/passkey/register/verify', {
+        name: navigator.platform || '通行密钥',
+        response: registerResponse
+      });
+
+      if (verifyRes.data.errcode === 0) {
+        message.success('通行密钥添加成功');
+        this.getPasskeyList();
+      } else {
+        message.error(verifyRes.data.errmsg);
+      }
+    } catch (e) {
+      message.error(e.message || '添加通行密钥失败');
+    } finally {
+      this.setState({ passkeyLoading: false });
+    }
+  };
+
+  deletePasskey = id => {
+    axios.post('/api/user/passkey/delete', { id }).then(
+      res => {
+        if (res.data.errcode === 0) {
+          message.success('通行密钥已删除');
+          this.getPasskeyList();
+        } else {
+          message.error(res.data.errmsg);
+        }
+      },
+      err => {
+        message.error(err.message);
+      }
+    );
   };
 
   updateUserinfo = name => {
@@ -206,7 +281,7 @@ class Profile extends Component {
 
   render() {
     let ButtonGroup = Button.Group;
-    let userNameEditHtml, emailEditHtml, secureEditHtml, roleEditHtml;
+    let userNameEditHtml, emailEditHtml, secureEditHtml, roleEditHtml, passkeyHtml;
     const Option = Select.Option;
     let userinfo = this.state.userinfo;
     let _userinfo = this.state._userinfo;
@@ -381,6 +456,45 @@ class Profile extends Component {
         </div>
       );
     }
+
+    if (userinfo.uid === this.props.curUid) {
+      passkeyHtml = (
+        <div className="passkey-panel">
+          {this.state.passkeys.length > 0 ? (
+            this.state.passkeys.map(passkey => (
+              <div className="passkey-item" key={passkey.id}>
+                <span className="passkey-name">{passkey.name || '通行密钥'}</span>
+                <span className="passkey-meta">
+                  {passkey.last_used_time ? formatTime(passkey.last_used_time) : '从未使用'}
+                </span>
+                <Popconfirm
+                  title="确认删除这个通行密钥？"
+                  onConfirm={() => this.deletePasskey(passkey.id)}
+                  okText="删除"
+                  cancelText="取消"
+                >
+                  <Button size="small">删除</Button>
+                </Popconfirm>
+              </div>
+            ))
+          ) : (
+            <span className="text">未绑定</span>
+          )}
+          {this.state.passkeySupported ? (
+            <Button
+              icon="plus"
+              loading={this.state.passkeyLoading}
+              onClick={this.addPasskey}
+            >
+              添加通行密钥
+            </Button>
+          ) : (
+            <span className="passkey-disabled">当前浏览器不支持</span>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="user-profile">
         <div className="user-item-body">
@@ -452,6 +566,15 @@ class Profile extends Component {
               <div className="maoboli" />
               <Col span={4}>密码</Col>
               <Col span={12}>{secureEditHtml}</Col>
+            </Row>
+          ) : (
+            ''
+          )}
+          {userinfo.uid === this.props.curUid ? (
+            <Row className="user-item" type="flex" justify="start">
+              <div className="maoboli" />
+              <Col span={4}>通行密钥</Col>
+              <Col span={12}>{passkeyHtml}</Col>
             </Row>
           ) : (
             ''

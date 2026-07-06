@@ -1,6 +1,6 @@
 {
   "name": "yapi-pro",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "description": "YApi 可视化接口管理平台社区维护 fork：修复依赖兼容性，升级至 Node 20 / MongoDB 6，提供开箱即用的 Docker Compose 部署方案",
   "homepage": "https://github.com/darknessomi/yapi",
   "bugs": {
@@ -30,6 +30,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@koa/router": "^15.6.0",
+    "@simplewebauthn/browser": "^13.3.0",
+    "@simplewebauthn/server": "^13.3.2",
     "ajv": "^8.20.0",
     "ajv-draft-04": "^1.0.0",
     "ajv-i18n": "^4.2.0",
