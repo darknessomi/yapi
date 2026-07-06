@@ -31,6 +31,7 @@ class baseController {
       '/api/user/avatar',
       '/api/user/login_by_ldap',
       '/api/user/passkey/auth/options',
+      '/api/user/passkey/auth/options/conditional',
       '/api/user/passkey/auth/verify'
     ];
     if (ignoreRouter.indexOf(ctx.path) > -1) {

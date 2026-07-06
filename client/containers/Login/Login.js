@@ -19,6 +19,13 @@ const changeHeight = {
   height: '.42rem'
 };
 
+const OTP_RESEND_COOLDOWN = 60;
+
+function isPasskeyCancelled(error) {
+  const name = error && error.name;
+  return name === 'NotAllowedError' || name === 'AbortError';
+}
+
 @connect(
   state => {
     return {
@@ -40,8 +47,12 @@ class Login extends Component {
       loginType: 'ldap',
       passkeySupported: false,
       passkeyLoading: false,
-      otpRequired: false
+      otpRequired: false,
+      otpSent: false,
+      otpCountdown: 0,
+      passkeySkipped: false
     };
+    this.otpCountdownTimer = null;
   }
 
   static propTypes = {
@@ -53,42 +64,150 @@ class Login extends Component {
     isLDAP: PropTypes.bool
   };
 
+  componentDidMount() {
+    console.log('isLDAP', this.props.isLDAP);
+    if (browserSupportsWebAuthn()) {
+      this.setState({ passkeySupported: true });
+      this.startConditionalPasskey();
+    }
+  }
+
+  componentWillUnmount() {
+    this.clearOtpCountdown();
+  }
+
+  clearOtpCountdown = () => {
+    if (this.otpCountdownTimer) {
+      clearInterval(this.otpCountdownTimer);
+      this.otpCountdownTimer = null;
+    }
+  };
+
+  startOtpCountdown = () => {
+    this.clearOtpCountdown();
+    this.setState({ otpCountdown: OTP_RESEND_COOLDOWN });
+    this.otpCountdownTimer = setInterval(() => {
+      this.setState(prev => {
+        if (prev.otpCountdown <= 1) {
+          this.clearOtpCountdown();
+          return { otpCountdown: 0 };
+        }
+        return { otpCountdown: prev.otpCountdown - 1 };
+      });
+    }, 1000);
+  };
+
+  startConditionalPasskey = async () => {
+    try {
+      const optionsRes = await axios.post('/api/user/passkey/auth/options/conditional');
+      if (optionsRes.data.errcode !== 0) {
+        return;
+      }
+
+      const authResponse = await startAuthentication({
+        optionsJSON: optionsRes.data.data,
+        useBrowserAutofill: true
+      });
+      await this.verifyPasskeyResponse(authResponse);
+    } catch (e) {
+      if (!isPasskeyCancelled(e)) {
+        console.warn('conditional passkey login failed', e);
+      }
+    }
+  };
+
+  verifyPasskeyResponse = async (authResponse, email) => {
+    const payload = email ? { email, response: authResponse } : { response: authResponse };
+    const verifyRes = await this.props.loginPasskeyActions(payload);
+
+    if (verifyRes.payload.data.errcode === 0) {
+      this.props.history.replace('/group');
+      message.success('登录成功! ');
+      return true;
+    }
+
+    message.error(verifyRes.payload.data.errmsg);
+    return false;
+  };
+
+  tryPasskeyLogin = async email => {
+    this.setState({ passkeyLoading: true });
+    try {
+      const optionsRes = await axios.post('/api/user/passkey/auth/options', { email });
+      if (optionsRes.data.errcode !== 0) {
+        return 'unavailable';
+      }
+
+      const authResponse = await startAuthentication({
+        optionsJSON: optionsRes.data.data
+      });
+      const success = await this.verifyPasskeyResponse(authResponse, email);
+      return success ? 'success' : 'failed';
+    } catch (e) {
+      if (isPasskeyCancelled(e)) {
+        return 'cancelled';
+      }
+      message.error(e.message || '通行密钥登录失败');
+      return 'failed';
+    } finally {
+      this.setState({ passkeyLoading: false });
+    }
+  };
+
   handleSubmit = e => {
     e.preventDefault();
     const form = this.props.form;
-    form.validateFields((err, values) => {
-      if (!err) {
-        if (this.props.isLDAP && this.state.loginType === 'ldap') {
-          this.props.loginLdapActions(values).then(res => {
-            if (res.payload.data.errcode == 0) {
-              this.props.history.replace('/group');
-              message.success('登录成功! ');
-            }
-          });
-        } else {
-          this.props.loginActions(values).then(res => {
-            if (res.payload.data.errcode == 0) {
-              this.props.history.replace('/group');
-              message.success('登录成功! ');
-            } else if (res.payload.data.errcode === 406) {
-              this.setState({ otpRequired: true });
-              message.warning(res.payload.data.errmsg);
-            } else {
-              message.error(res.payload.data.errmsg);
-            }
-          });
+    form.validateFields(async (err, values) => {
+      if (err) {
+        return;
+      }
+
+      const usePasswordLogin = !this.props.isLDAP || this.state.loginType !== 'ldap';
+      if (usePasswordLogin && this.state.otpRequired && !this.state.otpSent) {
+        return;
+      }
+      if (
+        usePasswordLogin &&
+        !this.state.otpRequired &&
+        !this.state.passkeySkipped &&
+        this.state.passkeySupported
+      ) {
+        const email = (values.email || '').trim();
+        if (email) {
+          const passkeyResult = await this.tryPasskeyLogin(email);
+          if (passkeyResult === 'success') {
+            return;
+          }
+          if (passkeyResult === 'cancelled') {
+            this.setState({ passkeySkipped: true });
+          }
         }
+      }
+
+      if (this.props.isLDAP && this.state.loginType === 'ldap') {
+        this.props.loginLdapActions(values).then(res => {
+          if (res.payload.data.errcode == 0) {
+            this.props.history.replace('/group');
+            message.success('登录成功! ');
+          }
+        });
+      } else {
+        this.props.loginActions(values).then(res => {
+          if (res.payload.data.errcode == 0) {
+            this.props.history.replace('/group');
+            message.success('登录成功! ');
+          } else if (res.payload.data.errcode === 406) {
+            const otpSent = !!(res.payload.data.data && res.payload.data.data.otp_sent);
+            this.setState({ otpRequired: true, otpSent });
+            message.warning(res.payload.data.errmsg);
+          } else {
+            message.error(res.payload.data.errmsg);
+          }
+        });
       }
     });
   };
 
-  componentDidMount() {
-    //Qsso.attach('qsso-login','/api/user/login_by_token')
-    console.log('isLDAP', this.props.isLDAP);
-    this.setState({
-      passkeySupported: browserSupportsWebAuthn()
-    });
-  }
   handleFormLayoutChange = e => {
     this.setState({ loginType: e.target.value });
   };
@@ -99,41 +218,34 @@ class Login extends Component {
       return message.error('请输入 Email');
     }
 
-    this.setState({ passkeyLoading: true });
-    try {
-      const optionsRes = await axios.post('/api/user/passkey/auth/options', { email });
-      if (optionsRes.data.errcode !== 0) {
-        return message.error(optionsRes.data.errmsg);
-      }
-
-      const authResponse = await startAuthentication({
-        optionsJSON: optionsRes.data.data
-      });
-      const verifyRes = await this.props.loginPasskeyActions({
-        email,
-        response: authResponse
-      });
-
-      if (verifyRes.payload.data.errcode === 0) {
-        this.props.history.replace('/group');
-        message.success('登录成功! ');
-      } else {
-        message.error(verifyRes.payload.data.errmsg);
-      }
-    } catch (e) {
-      message.error(e.message || '通行密钥登录失败');
-    } finally {
-      this.setState({ passkeyLoading: false });
+    const result = await this.tryPasskeyLogin(email);
+    if (result === 'cancelled') {
+      message.info('已取消通行密钥登录');
     }
   };
 
-  handleResendOtp = () => {
+  handleEmailChange = () => {
+    this.clearOtpCountdown();
+    this.setState({
+      otpRequired: false,
+      otpSent: false,
+      otpCountdown: 0,
+      passkeySkipped: false
+    });
+  };
+
+  handleSendOtp = () => {
+    if (this.state.otpCountdown > 0) {
+      return;
+    }
     this.props.form.validateFields(['email', 'password'], (err, values) => {
       if (err) {
         return;
       }
-      this.props.loginActions(values).then(res => {
+      this.props.loginActions({ ...values, send_otp: true }).then(res => {
         if (res.payload.data.errcode === 406) {
+          this.setState({ otpRequired: true, otpSent: true });
+          this.startOtpCountdown();
           message.success('验证码已发送');
         } else if (res.payload.data.errcode === 0) {
           this.props.history.replace('/group');
@@ -177,6 +289,7 @@ class Login extends Component {
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
               placeholder="Email"
               autoComplete="username webauthn"
+              onChange={this.handleEmailChange}
             />
           )}
         </FormItem>
@@ -210,7 +323,7 @@ class Login extends Component {
           )}
         </FormItem>
 
-        {this.state.otpRequired && (
+        {this.state.otpRequired && this.state.otpSent && (
           <FormItem style={formItemStyle}>
             {getFieldDecorator('otp_code', {
               rules: [{ required: true, message: '请输入邮件验证码!' }]
@@ -225,26 +338,39 @@ class Login extends Component {
           </FormItem>
         )}
 
-        {/* 登录按钮 */}
         <FormItem style={formItemStyle}>
-          <Button
-            style={changeHeight}
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            密码登录
-          </Button>
+          {this.state.otpRequired && !this.state.otpSent ? (
+            <Button
+              style={changeHeight}
+              type="primary"
+              className="login-form-button"
+              onClick={this.handleSendOtp}
+            >
+              发送验证码
+            </Button>
+          ) : (
+            <Button
+              style={changeHeight}
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+            >
+              密码登录
+            </Button>
+          )}
         </FormItem>
 
-        {this.state.otpRequired && (
+        {this.state.otpRequired && this.state.otpSent && (
           <FormItem style={formItemStyle}>
             <Button
               style={changeHeight}
               className="login-secondary-button"
-              onClick={this.handleResendOtp}
+              disabled={this.state.otpCountdown > 0}
+              onClick={this.handleSendOtp}
             >
-              重新发送验证码
+              {this.state.otpCountdown > 0
+                ? `${this.state.otpCountdown}s 后重新发送`
+                : '重新发送验证码'}
             </Button>
           </FormItem>
         )}

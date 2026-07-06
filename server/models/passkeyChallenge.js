@@ -20,7 +20,7 @@ class passkeyChallengeModel extends baseModel {
       },
       type: {
         type: String,
-        enum: ['register', 'auth', 'password_login'],
+        enum: ['register', 'auth', 'auth_conditional', 'password_login'],
         required: true
       },
       challenge: {
@@ -37,7 +37,7 @@ class passkeyChallengeModel extends baseModel {
     let query = { type: data.type };
     if (data.uid) {
       query.uid = data.uid;
-    } else {
+    } else if (data.email) {
       query.email = data.email;
     }
 

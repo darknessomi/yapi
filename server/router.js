@@ -215,6 +215,11 @@ let routerConfig = {
       method: 'post'
     },
     {
+      action: 'passkeyAuthOptionsConditional',
+      path: 'passkey/auth/options/conditional',
+      method: 'post'
+    },
+    {
       action: 'passkeyAuthVerify',
       path: 'passkey/auth/verify',
       method: 'post'

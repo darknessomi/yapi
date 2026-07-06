@@ -122,11 +122,19 @@ class userController extends baseController {
       const userPasskeys = await passkeyInst.findByUid(result._id);
       if (userPasskeys.length > 0 && yapi.mail) {
         if (!otpCode) {
-          await this.sendPasswordLoginCode(email);
+          const sendOtp = ctx.request.body.send_otp === true;
+          if (sendOtp) {
+            await this.sendPasswordLoginCode(email);
+            return (ctx.body = yapi.commons.resReturn(
+              { require_email_otp: true, otp_sent: true },
+              406,
+              '验证码已发送，请查收邮件'
+            ));
+          }
           return (ctx.body = yapi.commons.resReturn(
-            { require_email_otp: true },
+            { require_email_otp: true, otp_sent: false },
             406,
-            '该账号已绑定通行密钥，密码登录需要邮件验证码'
+            '该账号已绑定通行密钥，请使用通行密钥登录或获取邮件验证码'
           ));
         }
 
@@ -485,6 +493,32 @@ class userController extends baseController {
   }
 
   /**
+   * 生成通行密钥自动填充（Conditional UI）登录选项
+   * @interface /user/passkey/auth/options/conditional
+   * @method POST
+   * @category user
+   */
+  async passkeyAuthOptionsConditional(ctx) {
+    try {
+      let { rpID } = getPasskeyConfig(ctx);
+      let options = await generateAuthenticationOptions({
+        rpID,
+        userVerification: 'preferred'
+      });
+
+      let challengeInst = yapi.getInst(passkeyChallengeModel);
+      await challengeInst.upsert({
+        type: 'auth_conditional',
+        challenge: options.challenge
+      });
+
+      ctx.body = yapi.commons.resReturn(options);
+    } catch (e) {
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+    }
+  }
+
+  /**
    * 校验通行密钥登录结果
    * @interface /user/passkey/auth/verify
    * @method POST
@@ -494,29 +528,34 @@ class userController extends baseController {
     try {
       let email = this.normalizeEmail(ctx.request.body.email);
       let response = ctx.request.body.response || ctx.request.body;
-      if (!email) {
-        return (ctx.body = yapi.commons.resReturn(null, 400, 'email不能为空'));
-      }
-
-      let challengeInst = yapi.getInst(passkeyChallengeModel);
-      let challenge = await challengeInst.getValid({
-        email,
-        type: 'auth'
-      });
-      if (!challenge) {
-        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥登录请求已过期'));
-      }
-
-      let userInst = yapi.getInst(userModel);
-      let user = await userInst.findByEmail(email);
-      if (!user) {
-        return (ctx.body = yapi.commons.resReturn(null, 404, '该用户不存在'));
+      if (!response || !response.id) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥响应无效'));
       }
 
       let passkeyInst = yapi.getInst(passkeyModel);
       let passkey = await passkeyInst.findByCredentialID(response.id);
-      if (!passkey || Number(passkey.uid) !== Number(user._id)) {
+      if (!passkey) {
         return (ctx.body = yapi.commons.resReturn(null, 404, '通行密钥不存在'));
+      }
+
+      let userInst = yapi.getInst(userModel);
+      let user = await userInst.findById(passkey.uid);
+      if (!user) {
+        return (ctx.body = yapi.commons.resReturn(null, 404, '该用户不存在'));
+      }
+
+      if (email && this.normalizeEmail(user.email) !== email) {
+        return (ctx.body = yapi.commons.resReturn(null, 404, '通行密钥不存在'));
+      }
+      email = user.email;
+
+      let challengeInst = yapi.getInst(passkeyChallengeModel);
+      let challengeType = ctx.request.body.email ? 'auth' : 'auth_conditional';
+      let challengeQuery =
+        challengeType === 'auth' ? { email, type: 'auth' } : { type: 'auth_conditional' };
+      let challenge = await challengeInst.getValid(challengeQuery);
+      if (!challenge) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '通行密钥登录请求已过期'));
       }
 
       let { rpID, origin } = getPasskeyConfig(ctx);
@@ -541,10 +580,7 @@ class userController extends baseController {
         passkey.credentialID,
         verification.authenticationInfo.newCounter
       );
-      await challengeInst.del({
-        email,
-        type: 'auth'
-      });
+      await challengeInst.del(challengeQuery);
       this.setLoginCookie(user._id, user.passsalt);
 
       ctx.body = yapi.commons.resReturn(this.passkeyRes(user));
