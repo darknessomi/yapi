@@ -611,6 +611,17 @@ exports.getUserdata = async function getUserdata(uid, role) {
   };
 };
 
+exports.filterExistingMembers = async function filterExistingMembers(members) {
+  if (!members || !members.length) {
+    return [];
+  }
+  let userInst = yapi.getInst(userModel);
+  let uids = members.map(m => m.uid);
+  let existingUsers = await userInst.findByUids(uids);
+  let existingUidSet = new Set(existingUsers.map(u => u._id));
+  return members.filter(m => existingUidSet.has(m.uid));
+};
+
 // 处理mockJs脚本
 exports.handleMockScript = async function (script, context) {
   let sandbox = {

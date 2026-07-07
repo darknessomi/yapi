@@ -347,7 +347,8 @@ class groupController extends baseController {
     let params = ctx.params;
     let groupInst = yapi.getInst(groupModel);
     let group = await groupInst.get(params.id);
-    ctx.body = yapi.commons.resReturn(group.members);
+    let members = await yapi.commons.filterExistingMembers(group.members);
+    ctx.body = yapi.commons.resReturn(members);
   }
 
   /**

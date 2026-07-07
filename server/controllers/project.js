@@ -502,7 +502,8 @@ class projectController extends baseController {
     }
 
     let project = await this.Model.get(params.id);
-    ctx.body = yapi.commons.resReturn(project.members);
+    let members = await yapi.commons.filterExistingMembers(project.members);
+    ctx.body = yapi.commons.resReturn(members);
   }
 
   /**
