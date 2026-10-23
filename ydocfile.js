@@ -11,7 +11,7 @@ module.exports = {
         "home": '<img src="./images/logo_header@2x.png" /> &nbsp;YAPI', 
         "homeUrl": "./index.html", 
         "keywords": "api管理,接口管理,接口文档,api文档",
-        "description": "YApi 可视化接口管理平台社区维护 fork：修复依赖兼容性，升级至 Node 20 / MongoDB 6，提供开箱即用的 Docker Compose 部署方案。"
+        "description": "YApi 可视化接口管理平台社区维护 fork：修复依赖兼容性，升级至 Node 22 / MongoDB 6，提供开箱即用的 Docker Compose 部署方案。"
     },
     "options": {
         "foldcode": false,

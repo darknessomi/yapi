@@ -1,3 +1,7 @@
+## v1.11.3
+* fix(security): 运行时升级到 Node.js 22.23.4，修复 [2026-10-21 安全公告](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) 中的漏洞，包括 CVE-2026-111497、CVE-2026-106069、CVE-2026-105482
+* chore: `engines` 限定为 `^22.23.4 || ^24.22.1 || >=26.12.1`，Docker、CI 与 `.nvmrc` 钉在 22.23.4
+
 ## v1.11.2
 * feat(auth): 登录页支持通行密钥 Conditional UI 自动填充
 * feat(auth): 密码登录前优先尝试通行密钥，取消后可继续密码登录

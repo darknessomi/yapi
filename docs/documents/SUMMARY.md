@@ -1,6 +1,6 @@
 # YApi
 
-> 本 fork 由 [darknessomi/yapi](https://github.com/darknessomi/yapi) 社区维护，修复依赖兼容性并升级至 Node 20 / MongoDB 6。部署与升级说明见仓库 [README](https://github.com/darknessomi/yapi)。
+> 本 fork 由 [darknessomi/yapi](https://github.com/darknessomi/yapi) 社区维护，修复依赖兼容性并升级至 Node 22 / MongoDB 6。部署与升级说明见仓库 [README](https://github.com/darknessomi/yapi)。
 
 ### 快速上手
 

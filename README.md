@@ -8,6 +8,10 @@
 > 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
 
 ### 最近更新
+**v1.11.3** (2026-10-23)
+1. 运行时从 Node.js 20 升级到 22.23.4。Docker 镜像、CI 与 `.nvmrc` 固定为 22.23.4
+2. 已修复 [2026-10-21 Node.js 安全公告](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) 中的漏洞。`engines` 只接受已修补版本：22.23.4、24.22.1、26.12.1 及以上。22 线修复的 HIGH 漏洞包括 Brotli 解码越界写（CVE-2026-111497）、TLS 主机名校验绕过（CVE-2026-106069）、`dns.resolve` 截断含 NUL 的域名（CVE-2026-105482）
+
 **v1.11.2** (2026-07-06)
 1. 登录页支持通行密钥 Conditional UI 自动填充
 2. 密码登录前优先尝试通行密钥，取消后可继续密码登录
@@ -243,7 +247,7 @@ docker compose exec mongo mongorestore --db yapi /tmp/yapi-backup/yapi
 如需脱离 Docker 直接在主机运行：
 
 ### 环境要求
-* Node.js 20+（见 `package.json` 的 `engines`）
+* Node.js 22.23.4、24.22.1 或 26.12.1 及以上（见 `package.json` 的 `engines`）。这些版本已包含 [2026-10-21 Node.js 安全发布](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) 的修复；更低的 22、24、26 版本不接受
 * MongoDB 6+
 * git
 
