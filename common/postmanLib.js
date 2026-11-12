@@ -7,7 +7,6 @@ const HTTP_METHOD = constants.HTTP_METHOD;
 const axios = require('axios');
 const qs = require('qs');
 const CryptoJS = require('crypto-js');
-const jsrsasign = require('jsrsasign');
 const https = require('https');
 
 const isNode = typeof global == 'object' && global.global === global;
@@ -288,7 +287,6 @@ async function crossRequest(defaultOptions, preScript, afterScript, commonContex
   context.utils = Object.freeze({
     _: _,
     CryptoJS: CryptoJS,
-    jsrsasign: jsrsasign,
     base64: utils.base64,
     md5: utils.md5,
     sha1: utils.sha1,

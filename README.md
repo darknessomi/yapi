@@ -8,6 +8,12 @@
 > 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
 
 ### 最近更新
+**v1.11.4** (2026-11-12)
+1. 运行时升级到 Node.js 22.23.5。Docker 镜像、CI 与 `.nvmrc` 固定为 22.23.5
+2. 已修复 [2026-11-11 Node.js 安全公告](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases) 中的漏洞。`engines` 只接受已修补版本：22.23.5、24.22.3、26.13.1 及以上。22 线修复的 HIGH 漏洞包括 HTTPS 零长度 TLS 写重入 `llhttp` 导致堆内存泄漏（CVE-2026-123864）、HTTP/2 关闭过程中协议错误导致会话与文件描述符泄漏（CVE-2026-123865）、HTTP/2 流拆除时把已释放的响应内存写给对端（CVE-2026-123866）、TLS 1.2 重协商单方面更换 servername 绕过客户端证书认证（CVE-2026-123872）
+3. 在现有 semver 范围内升级依赖，包括 axios 1.21.1、koa 3.3.0、qs 6.17.1、vite 6.4.6、vitest 4.1.12
+4. 从接口脚本沙箱移除已停止维护的 jsrsasign，`context.utils` 不再提供该库
+
 **v1.11.3** (2026-10-23)
 1. 运行时从 Node.js 20 升级到 22.23.4。Docker 镜像、CI 与 `.nvmrc` 固定为 22.23.4
 2. 已修复 [2026-10-21 Node.js 安全公告](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) 中的漏洞。`engines` 只接受已修补版本：22.23.4、24.22.1、26.12.1 及以上。22 线修复的 HIGH 漏洞包括 Brotli 解码越界写（CVE-2026-111497）、TLS 主机名校验绕过（CVE-2026-106069）、`dns.resolve` 截断含 NUL 的域名（CVE-2026-105482）
@@ -247,7 +253,7 @@ docker compose exec mongo mongorestore --db yapi /tmp/yapi-backup/yapi
 如需脱离 Docker 直接在主机运行：
 
 ### 环境要求
-* Node.js 22.23.4、24.22.1 或 26.12.1 及以上（见 `package.json` 的 `engines`）。这些版本已包含 [2026-10-21 Node.js 安全发布](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) 的修复；更低的 22、24、26 版本不接受
+* Node.js 22.23.5、24.22.3 或 26.13.1 及以上（见 `package.json` 的 `engines`）。这些版本已包含 [2026-11-11 Node.js 安全发布](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases) 的修复；更低的 22、24、26 版本不接受
 * MongoDB 6+
 * git
 

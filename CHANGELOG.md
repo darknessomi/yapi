@@ -1,3 +1,9 @@
+## v1.11.4
+* fix(security): 运行时升级到 Node.js 22.23.5，修复 [2026-11-11 安全公告](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases) 中的漏洞，包括 CVE-2026-123864、CVE-2026-123865、CVE-2026-123866、CVE-2026-123872
+* chore: `engines` 限定为 `^22.23.5 || ^24.22.3 || >=26.13.1`，Docker、CI 与 `.nvmrc` 钉在 22.23.5
+* chore(deps): 在现有 semver 范围内升级依赖，包括 axios 1.21.1、koa 3.3.0、qs 6.17.1、vite 6.4.6、vitest 4.1.12
+* refactor: 从接口脚本沙箱移除已停止维护的 jsrsasign，`context.utils` 不再提供该库
+
 ## v1.11.3
 * fix(security): 运行时升级到 Node.js 22.23.4，修复 [2026-10-21 安全公告](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) 中的漏洞，包括 CVE-2026-111497、CVE-2026-106069、CVE-2026-105482
 * chore: `engines` 限定为 `^22.23.4 || ^24.22.1 || >=26.12.1`，Docker、CI 与 `.nvmrc` 钉在 22.23.4

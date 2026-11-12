@@ -18,7 +18,7 @@ proxy_set_header Connection "upgrade";
 ## 环境要求
 
 * Docker + Docker Compose（推荐）
-* 或 Node.js 22.23.4 / 24.22.1 / 26.12.1 及以上、MongoDB 6+、git（源码部署）
+* 或 Node.js 22.23.5 / 24.22.3 / 26.13.1 及以上、MongoDB 6+、git（源码部署）
 
 ## 安装
 

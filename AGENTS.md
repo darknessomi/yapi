@@ -40,4 +40,4 @@ Open the app at `http://127.0.0.1:3000/` (not :4000).
 - Frontend production build: `npm run build-client`
 
 ### Node version
-Node engines are `^22.23.4 || ^24.22.1 || >=26.12.1` (October 21, 2026 security releases). `.nvmrc`, CI, and the Docker image pin 22.23.4.
+Node engines are `^22.23.5 || ^24.22.3 || >=26.13.1` (November 11, 2026 security releases). `.nvmrc`, CI, and the Docker image pin 22.23.5.
