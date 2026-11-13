@@ -1,6 +1,6 @@
 {
   "name": "yapi-pro",
-  "version": "1.11.4",
+  "version": "1.11.5",
   "description": "YApi 可视化接口管理平台社区维护 fork：修复依赖兼容性，升级至 Node 22 / MongoDB 6，提供开箱即用的 Docker Compose 部署方案",
   "homepage": "https://github.com/darknessomi/yapi",
   "bugs": {
@@ -60,6 +60,7 @@
     "md5": "^2.3.0",
     "mockjs": "^1.1.0",
     "mongoose": "^6.13.12",
+    "node-forge": "^1.4.3",
     "node-schedule": "^2.1.2",
     "nodemailer": "^8.0.11",
     "qs": "^6.17.1",

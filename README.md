@@ -8,6 +8,9 @@
 > 本 fork 仅以本仓库源码 + Docker Compose 方式部署和升级。
 
 ### 最近更新
+**v1.11.5** (2026-11-13)
+1. 修复 Node.js 22 删除 `crypto.createCipher` 后项目 token 无法签发和解密的问题。密钥派生改用 node-forge 的 `opensslDeriveBytes`，已有 token 仍可解密
+
 **v1.11.4** (2026-11-12)
 1. 运行时升级到 Node.js 22.23.5。Docker 镜像、CI 与 `.nvmrc` 固定为 22.23.5
 2. 已修复 [2026-11-11 Node.js 安全公告](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases) 中的漏洞。`engines` 只接受已修补版本：22.23.5、24.22.3、26.13.1 及以上。22 线修复的 HIGH 漏洞包括 HTTPS 零长度 TLS 写重入 `llhttp` 导致堆内存泄漏（CVE-2026-123864）、HTTP/2 关闭过程中协议错误导致会话与文件描述符泄漏（CVE-2026-123865）、HTTP/2 流拆除时把已释放的响应内存写给对端（CVE-2026-123866）、TLS 1.2 重协商单方面更换 servername 绕过客户端证书认证（CVE-2026-123872）

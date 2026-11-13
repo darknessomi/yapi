@@ -1,3 +1,6 @@
+## v1.11.5
+* fix: Node.js 22 起删除 `crypto.createCipher` / `createDecipher`，项目 token 加解密改用 node-forge 的 `opensslDeriveBytes`，已有 token 仍可解密
+
 ## v1.11.4
 * fix(security): 运行时升级到 Node.js 22.23.5，修复 [2026-11-11 安全公告](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases) 中的漏洞，包括 CVE-2026-123864、CVE-2026-123865、CVE-2026-123866、CVE-2026-123872
 * chore: `engines` 限定为 `^22.23.5 || ^24.22.3 || >=26.13.1`，Docker、CI 与 `.nvmrc` 钉在 22.23.5
