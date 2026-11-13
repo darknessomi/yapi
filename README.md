@@ -84,7 +84,7 @@ docker compose up -d
 # 访问 http://127.0.0.1:3000
 ```
 
-镜像地址：[ghcr.io/darknessomi/yapi](https://github.com/darknessomi/yapi/pkgs/container/yapi)，可用 tag 包括 `latest`、`1.11.0`、`1.10` 等，支持 `linux/amd64` 与 `linux/arm64`。如需固定版本，将 `docker-compose.yml` 中的 `:latest` 改为具体 tag。
+镜像地址：[ghcr.io/darknessomi/yapi](https://github.com/darknessomi/yapi/pkgs/container/yapi)，可用 tag 包括 `latest`、`1.11.5`、`1.11` 等，支持 `linux/amd64` 与 `linux/arm64`。如需固定版本，将 `docker-compose.yml` 中的 `:latest` 改为具体 tag。
 
 **方式二：本地源码构建**
 

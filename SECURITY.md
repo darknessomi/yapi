@@ -9,12 +9,12 @@ We provide security fixes for the following releases:
 | Version / 版本 | Supported / 是否支持 |
 | ---------------- | -------------------- |
 | `latest` (GHCR)  | ✅                   |
-| `1.10.x`         | ✅                   |
-| `< 1.10.0`       | ❌                   |
+| `1.11.x`         | ✅                   |
+| `< 1.11.0`       | ❌                   |
 
-If you run a Docker image, please include the image tag (e.g. `ghcr.io/darknessomi/yapi:1.10.2`) in your report.
+If you run a Docker image, please include the image tag (e.g. `ghcr.io/darknessomi/yapi:1.11.5`) in your report.
 
-若使用 Docker 镜像，请在报告中注明 tag（例如 `ghcr.io/darknessomi/yapi:1.10.2`）。
+若使用 Docker 镜像，请在报告中注明 tag（例如 `ghcr.io/darknessomi/yapi:1.11.5`）。
 
 ## Reporting a Vulnerability / 报告漏洞
 

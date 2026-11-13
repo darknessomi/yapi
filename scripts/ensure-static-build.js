@@ -7,6 +7,7 @@ const FRONTEND_PATHS = [
   'client/',
   'common/',
   'exts/',
+  'package.json',
   'vite.config.js',
   'scripts/generate-plugin-module.js',
   'scripts/generate-assets.js',
